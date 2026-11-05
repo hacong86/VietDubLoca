@@ -1,0 +1,937 @@
+openapi: 3.1.0
+info:
+  title: VietDub Local Broker
+  version: 1.0.0
+  description: Hợp đồng dự án cần triển khai. Không phải API cloud VieNeu. Business
+    checks và WebSocket được mô tả trong docs/08.
+servers:
+- url: http://127.0.0.1:8765
+paths:
+  /health:
+    get:
+      summary: Liveness công khai tối thiểu
+      operationId: get_health
+      security: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/status:
+    get:
+      summary: Snapshot runtime đã redact
+      operationId: get_v1_status
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/setup:
+    get:
+      summary: Trạng thái chuẩn bị lần đầu (không có token hoặc đường dẫn riêng)
+      operationId: get_setup
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Trạng thái hiện tại
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetupStatus'
+    post:
+      summary: Kiểm, tải và nạp bộ model đề xuất; bấm lặp dùng cùng tác vụ
+      operationId: start_setup
+      security:
+      - LocalBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [consent, accepted_sizes]
+              properties:
+                consent:
+                  const: true
+                include_asr:
+                  type: boolean
+                  default: false
+                accepted_sizes:
+                  type: object
+                  description: Chính xác ID và size_bytes trong catalog của Qwen Q5, VieNeu, MOSS; thêm whisper_small_en nếu include_asr. Không nhận URL.
+                  additionalProperties:
+                    type: integer
+                    minimum: 1
+      responses:
+        '200':
+          description: Tác vụ do broker giữ, tiếp tục khi đóng panel
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetupStatus'
+        default:
+          description: Thiếu đồng ý, đang có phiên xem, thiếu runtime ASR hoặc lỗi xác thực
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/setup/pause:
+    post:
+      summary: Yêu cầu tạm dừng; giữ phần tải hợp lệ để tiếp tục
+      operationId: pause_setup
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Snapshot sau khi yêu cầu dừng; kiểm/nạp hiện tại có thể đang hoàn tất
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetupStatus'
+  /v1/models:
+    get:
+      summary: Danh sách model
+      operationId: get_v1_models
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelList'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/models/{model_id}/download:
+    post:
+      summary: Tải model đã có consent
+      operationId: post_v1_models_model_id_download
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Download'
+      parameters:
+      - name: model_id
+        in: path
+        required: true
+        schema: &id001
+          type: string
+          minLength: 1
+  /v1/models/{model_id}/activate:
+    post:
+      summary: Nạp model verified
+      operationId: post_v1_models_model_id_activate
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+      parameters:
+      - name: model_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/models/{model_id}:
+    delete:
+      summary: Xóa model không đang dùng
+      operationId: delete_v1_models_model_id
+      security:
+      - LocalBearer: []
+      responses:
+        '204':
+          description: Thành công
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: model_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/voices:
+    get:
+      summary: Danh sách giọng SDK
+      operationId: get_v1_voices
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoiceList'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/voices/preview:
+    post:
+      summary: Nghe thử giọng
+      operationId: post_v1_voices_preview
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preview'
+  /v1/sessions:
+    post:
+      summary: Tạo phiên active
+      operationId: post_v1_sessions
+      security:
+      - LocalBearer: []
+      responses:
+        '201':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionCreate'
+  /v1/sessions/{session_id}:
+    get:
+      summary: Snapshot phiên
+      operationId: get_v1_sessions_session_id
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema: *id001
+    delete:
+      summary: Kết thúc phiên
+      operationId: delete_v1_sessions_session_id
+      security:
+      - LocalBearer: []
+      responses:
+        '204':
+          description: Thành công
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/sessions/{session_id}/captions:
+    post:
+      summary: Nhập cue batch
+      operationId: post_v1_sessions_session_id_captions
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaptionBatch'
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/sessions/{session_id}/clock:
+    post:
+      summary: Cập nhật clock
+      operationId: post_v1_sessions_session_id_clock
+      security:
+      - LocalBearer: []
+      responses:
+        '204':
+          description: Thành công
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaybackClock'
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/sessions/{session_id}/control:
+    post:
+      summary: Điều khiển phiên
+      operationId: post_v1_sessions_session_id_control
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Control'
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/segments/{segment_id}:
+    patch:
+      summary: Sửa bản dịch
+      operationId: patch_v1_segments_segment_id
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionedResponse'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Override'
+      parameters:
+      - name: segment_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/segments/{segment_id}/retranslate:
+    post:
+      summary: Dịch lại unit đã có source
+      operationId: post_v1_segments_segment_id_retranslate
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+      parameters:
+      - name: segment_id
+        in: path
+        required: true
+        schema: *id001
+  /v1/glossary:
+    get:
+      summary: Đọc glossary
+      operationId: get_v1_glossary
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionedResponse'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Thay glossary với revision
+      operationId: put_v1_glossary
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionedResponse'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VersionedObject'
+  /v1/settings:
+    get:
+      summary: Đọc settings
+      operationId: get_v1_settings
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionedResponse'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Thay settings với revision
+      operationId: put_v1_settings
+      security:
+      - LocalBearer: []
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionedResponse'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VersionedObject'
+  /v1/cache/clear:
+    post:
+      summary: Xóa cache có xác nhận
+      operationId: post_v1_cache_clear
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClearCache'
+  /v1/export/subtitles:
+    post:
+      summary: Xuất phụ đề có xác nhận quyền
+      operationId: post_v1_export_subtitles
+      security:
+      - LocalBearer: []
+      responses:
+        '202':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        default:
+          description: Lỗi có cấu trúc
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Export'
+components:
+  securitySchemes:
+    LocalBearer:
+      type: http
+      scheme: bearer
+  schemas:
+    Request:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id:
+          type: string
+          minLength: 1
+      required:
+      - request_id
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message_vi:
+          type: string
+        request_id:
+          type: string
+        retryable:
+          type: boolean
+      required:
+      - code
+      - message_vi
+      - request_id
+      - retryable
+    Job:
+      type: object
+      properties:
+        job_id:
+          type: string
+        state:
+          type: string
+      required:
+      - job_id
+      - state
+    Status:
+      type: object
+      properties:
+        protocol_version:
+          const: 1
+        state:
+          type: string
+        workers:
+          type: array
+          items:
+            type: object
+        model_id:
+          type:
+          - string
+          - 'null'
+      required:
+      - protocol_version
+      - state
+    SessionCreate:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        video_id: *id001
+        tab_id:
+          type: integer
+        mode:
+          enum:
+          - vod_sync
+          - live_delayed
+          - study
+        source_language:
+          const: en
+        target_language:
+          const: vi
+      required:
+      - request_id
+      - video_id
+      - tab_id
+      - mode
+      - source_language
+      - target_language
+    Session:
+      type: object
+      additionalProperties: false
+      properties:
+        session_id: *id001
+        timeline_epoch: &id002
+          type: integer
+          minimum: 0
+        state: *id001
+        mode:
+          enum:
+          - vod_sync
+          - live_delayed
+          - study
+      required:
+      - session_id
+      - timeline_epoch
+      - state
+      - mode
+    Control:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        timeline_epoch: *id002
+        action:
+          enum:
+          - play
+          - pause
+          - seek
+          - stop
+          - set_mode
+          - replay
+        media_ms:
+          type: integer
+          minimum: 0
+        mode:
+          enum:
+          - vod_sync
+          - live_delayed
+          - study
+        segment_id: *id001
+      required:
+      - request_id
+      - timeline_epoch
+      - action
+      allOf:
+      - if:
+          properties:
+            action:
+              const: seek
+        then:
+          required:
+          - media_ms
+      - if:
+          properties:
+            action:
+              const: set_mode
+        then:
+          required:
+          - mode
+      - if:
+          properties:
+            action:
+              const: replay
+        then:
+          required:
+          - segment_id
+    Download:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        consent:
+          const: true
+      required:
+      - request_id
+      - consent
+    Preview:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        voice_id: *id001
+        text:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required:
+      - request_id
+      - voice_id
+    Override:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        expected_revision: *id002
+        target_display: *id001
+        target_spoken: *id001
+      required:
+      - request_id
+      - expected_revision
+      - target_display
+      - target_spoken
+    VersionedObject:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        expected_version: *id002
+        value:
+          type: object
+      required:
+      - request_id
+      - expected_version
+      - value
+    VersionedResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        version: *id002
+        value:
+          type: object
+      required:
+      - version
+      - value
+    ClearCache:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        scope:
+          enum:
+          - video
+          - all
+        video_id: *id001
+        confirmed:
+          const: true
+      required:
+      - request_id
+      - scope
+      - confirmed
+      allOf:
+      - if:
+          properties:
+            scope:
+              const: video
+        then:
+          required:
+          - video_id
+    Export:
+      type: object
+      additionalProperties: false
+      properties:
+        request_id: *id001
+        session_id: *id001
+        format:
+          enum:
+          - srt
+          - vtt
+        bilingual:
+          type: boolean
+        rights_acknowledged:
+          const: true
+      required:
+      - request_id
+      - session_id
+      - format
+      - bilingual
+      - rights_acknowledged
+    CaptionBatch:
+      $ref: ./caption-batch.schema.json
+    PlaybackClock:
+      $ref: ./playback-clock.schema.json
+    SetupStatus:
+      type: object
+      required: [state, busy, ready, current_model, error, include_asr, asr_runtime_available, models]
+      properties:
+        state:
+          enum: [idle, checking, downloading, activating, ready, paused, failed]
+        busy:
+          type: boolean
+        ready:
+          type: boolean
+          description: Bộ dịch và TTS đều sẵn sàng; ASR là tùy chọn
+        current_model:
+          type: [string, 'null']
+        error:
+          type: [string, 'null']
+        include_asr:
+          type: boolean
+        asr_runtime_available:
+          type: boolean
+        models:
+          type: array
+          items:
+            type: object
+            required: [model_id, state, size_bytes]
+            properties:
+              model_id:
+                type: string
+              state:
+                type: string
+              size_bytes:
+                type: integer
+    ModelList:
+      type: object
+      properties:
+        models:
+          type: array
+          items:
+            type: object
+            properties:
+              model_id: *id001
+              status: *id001
+              verified:
+                type: boolean
+            required:
+            - model_id
+            - status
+            - verified
+      required:
+      - models
+    VoiceList:
+      type: object
+      properties:
+        voices:
+          type: array
+          items:
+            type: object
+            properties:
+              voice_id: *id001
+              label: *id001
+            required:
+            - voice_id
+            - label
+      required:
+      - voices
+    Health:
+      type: object
+      additionalProperties: false
+      properties:
+        protocol_version:
+          const: 1
+        state:
+          enum:
+          - ok
+      required:
+      - protocol_version
+      - state

@@ -1,0 +1,518 @@
+[
+ {
+  "name": "annotated-doc",
+  "version": "0.0.5",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "annotated-types",
+  "version": "0.8.0",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "anyio",
+  "version": "4.15.1",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "audioread",
+  "version": "3.1.0",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "brotli",
+  "version": "1.2.0",
+  "license": "MIT",
+  "home": "https://github.com/google/brotli"
+ },
+ {
+  "name": "certifi",
+  "version": "2026.7.22",
+  "license": "Mozilla Public License 2.0 (MPL 2.0)",
+  "home": "https://github.com/certifi/python-certifi"
+ },
+ {
+  "name": "cffi",
+  "version": "2.1.1",
+  "license": "MIT-0",
+  "home": ""
+ },
+ {
+  "name": "charset-normalizer",
+  "version": "3.5.1",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "click",
+  "version": "8.5.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "cloudpickle",
+  "version": "3.1.2",
+  "license": "BSD License",
+  "home": "https://github.com/cloudpipe/cloudpickle"
+ },
+ {
+  "name": "colorama",
+  "version": "0.4.6",
+  "license": "BSD License",
+  "home": ""
+ },
+ {
+  "name": "decorator",
+  "version": "5.3.1",
+  "license": "BSD-2-Clause",
+  "home": ""
+ },
+ {
+  "name": "fastapi",
+  "version": "0.141.1",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "filelock",
+  "version": "3.32.3",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "flatbuffers",
+  "version": "25.12.19",
+  "license": "Apache Software License",
+  "home": "https://google.github.io/flatbuffers/"
+ },
+ {
+  "name": "fsspec",
+  "version": "2026.7.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "gradio",
+  "version": "6.17.3",
+  "license": "Apache-2.0",
+  "home": ""
+ },
+ {
+  "name": "gradio_client",
+  "version": "2.5.0",
+  "license": "Apache-2.0",
+  "home": ""
+ },
+ {
+  "name": "groovy",
+  "version": "0.1.2",
+  "license": "MIT License",
+  "home": ""
+ },
+ {
+  "name": "h11",
+  "version": "0.16.0",
+  "license": "MIT License",
+  "home": "https://github.com/python-hyper/h11"
+ },
+ {
+  "name": "hf-gradio",
+  "version": "0.4.1",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "httpcore",
+  "version": "1.0.9",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "httpx",
+  "version": "0.28.1",
+  "license": "BSD License",
+  "home": ""
+ },
+ {
+  "name": "huggingface_hub",
+  "version": "0.36.2",
+  "license": "Apache Software License",
+  "home": "https://github.com/huggingface/huggingface_hub"
+ },
+ {
+  "name": "idna",
+  "version": "3.20",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "Jinja2",
+  "version": "3.1.6",
+  "license": "BSD License",
+  "home": ""
+ },
+ {
+  "name": "joblib",
+  "version": "1.6.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "kaldi-native-fbank",
+  "version": "1.22.3",
+  "license": "Apache-2.0",
+  "home": "https://github.com/csukuangfj/kaldi-native-fbank"
+ },
+ {
+  "name": "lazy-loader",
+  "version": "0.6",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "librosa",
+  "version": "0.11.0",
+  "license": "ISC License (ISCL)",
+  "home": "https://librosa.org"
+ },
+ {
+  "name": "llvmlite",
+  "version": "0.49.0",
+  "license": "UNKNOWN",
+  "home": "http://llvmlite.readthedocs.io"
+ },
+ {
+  "name": "markdown-it-py",
+  "version": "4.2.0",
+  "license": "MIT License",
+  "home": ""
+ },
+ {
+  "name": "MarkupSafe",
+  "version": "3.0.3",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "mdurl",
+  "version": "0.1.2",
+  "license": "MIT License",
+  "home": ""
+ },
+ {
+  "name": "mpmath",
+  "version": "1.3.0",
+  "license": "BSD License",
+  "home": "http://mpmath.org/"
+ },
+ {
+  "name": "msgpack",
+  "version": "1.2.2",
+  "license": "Apache-2.0",
+  "home": ""
+ },
+ {
+  "name": "narwhals",
+  "version": "2.26.0",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "networkx",
+  "version": "3.6.1",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "numba",
+  "version": "0.67.0",
+  "license": "BSD License",
+  "home": "https://numba.pydata.org"
+ },
+ {
+  "name": "numpy",
+  "version": "2.4.6",
+  "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+  "home": ""
+ },
+ {
+  "name": "onnxruntime",
+  "version": "1.30.0",
+  "license": "MIT License",
+  "home": "https://onnxruntime.ai"
+ },
+ {
+  "name": "orjson",
+  "version": "3.12.0",
+  "license": "MPL-2.0 AND (Apache-2.0 OR MIT)",
+  "home": ""
+ },
+ {
+  "name": "packaging",
+  "version": "26.3",
+  "license": "Apache-2.0 OR BSD-2-Clause",
+  "home": ""
+ },
+ {
+  "name": "pandas",
+  "version": "3.0.6",
+  "license": "BSD License",
+  "home": ""
+ },
+ {
+  "name": "pillow",
+  "version": "12.3.0",
+  "license": "MIT-CMU",
+  "home": ""
+ },
+ {
+  "name": "platformdirs",
+  "version": "4.11.12",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "pooch",
+  "version": "1.9.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "protobuf",
+  "version": "7.36.2",
+  "license": "3-Clause BSD License",
+  "home": "https://developers.google.com/protocol-buffers/"
+ },
+ {
+  "name": "pycparser",
+  "version": "3.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "pydantic",
+  "version": "2.13.5",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "pydantic_core",
+  "version": "2.46.5",
+  "license": "MIT",
+  "home": "https://github.com/pydantic/pydantic"
+ },
+ {
+  "name": "pydub",
+  "version": "0.25.1",
+  "license": "MIT License",
+  "home": "http://pydub.com"
+ },
+ {
+  "name": "Pygments",
+  "version": "2.21.0",
+  "license": "BSD-2-Clause",
+  "home": ""
+ },
+ {
+  "name": "python-dateutil",
+  "version": "2.9.0.post0",
+  "license": "Apache Software License; BSD License",
+  "home": "https://github.com/dateutil/dateutil"
+ },
+ {
+  "name": "python-multipart",
+  "version": "0.0.32",
+  "license": "Apache-2.0",
+  "home": ""
+ },
+ {
+  "name": "pytz",
+  "version": "2026.3.post1",
+  "license": "MIT License",
+  "home": "http://pythonhosted.org/pytz"
+ },
+ {
+  "name": "PyYAML",
+  "version": "6.0.3",
+  "license": "MIT License",
+  "home": "https://pyyaml.org/"
+ },
+ {
+  "name": "regex",
+  "version": "2026.9.10",
+  "license": "Apache-2.0 AND CNRI-Python",
+  "home": ""
+ },
+ {
+  "name": "requests",
+  "version": "2.34.2",
+  "license": "Apache Software License",
+  "home": ""
+ },
+ {
+  "name": "rich",
+  "version": "15.0.0",
+  "license": "MIT License",
+  "home": ""
+ },
+ {
+  "name": "safehttpx",
+  "version": "0.1.7",
+  "license": "MIT License",
+  "home": ""
+ },
+ {
+  "name": "safetensors",
+  "version": "0.8.0",
+  "license": "Apache Software License",
+  "home": ""
+ },
+ {
+  "name": "scikit-learn",
+  "version": "1.9.1",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "scipy",
+  "version": "1.17.1",
+  "license": "BSD License",
+  "home": ""
+ },
+ {
+  "name": "sea-g2p",
+  "version": "0.10.0",
+  "license": "Apache Software License",
+  "home": ""
+ },
+ {
+  "name": "semantic-version",
+  "version": "2.10.0",
+  "license": "BSD License",
+  "home": "https://github.com/rbarrois/python-semanticversion"
+ },
+ {
+  "name": "shellingham",
+  "version": "1.5.4",
+  "license": "ISC License (ISCL)",
+  "home": "https://github.com/sarugaku/shellingham"
+ },
+ {
+  "name": "six",
+  "version": "1.17.0",
+  "license": "MIT License",
+  "home": "https://github.com/benjaminp/six"
+ },
+ {
+  "name": "soundfile",
+  "version": "0.14.0",
+  "license": "BSD License",
+  "home": "https://github.com/bastibe/python-soundfile"
+ },
+ {
+  "name": "soxr",
+  "version": "1.1.0",
+  "license": "LGPL-2.1-or-later",
+  "home": ""
+ },
+ {
+  "name": "starlette",
+  "version": "1.6.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "sympy",
+  "version": "1.14.0",
+  "license": "BSD License",
+  "home": "https://sympy.org"
+ },
+ {
+  "name": "threadpoolctl",
+  "version": "3.7.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "tokenizers",
+  "version": "0.22.2",
+  "license": "Apache Software License",
+  "home": ""
+ },
+ {
+  "name": "tomlkit",
+  "version": "0.14.0",
+  "license": "MIT License",
+  "home": ""
+ },
+ {
+  "name": "torch",
+  "version": "2.8.0+cu128",
+  "license": "BSD License",
+  "home": "https://pytorch.org/"
+ },
+ {
+  "name": "torchaudio",
+  "version": "2.8.0+cu128",
+  "license": "BSD License",
+  "home": "https://github.com/pytorch/audio"
+ },
+ {
+  "name": "tqdm",
+  "version": "4.70.1",
+  "license": "MPL-2.0 AND MIT",
+  "home": ""
+ },
+ {
+  "name": "transformers",
+  "version": "4.57.6",
+  "license": "Apache Software License",
+  "home": "https://github.com/huggingface/transformers"
+ },
+ {
+  "name": "typer",
+  "version": "0.27.2",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "typing-inspection",
+  "version": "0.4.4",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "typing_extensions",
+  "version": "4.16.0",
+  "license": "PSF-2.0",
+  "home": ""
+ },
+ {
+  "name": "tzdata",
+  "version": "2026.4",
+  "license": "Apache-2.0",
+  "home": "https://github.com/python/tzdata"
+ },
+ {
+  "name": "urllib3",
+  "version": "2.8.0",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "uvicorn",
+  "version": "0.53.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "vieneu",
+  "version": "3.8.1",
+  "license": "Apache Software License",
+  "home": ""
+ }
+]

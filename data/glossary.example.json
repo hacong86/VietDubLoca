@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "source": "Apply Root Motion",
+      "domain": "unity",
+      "policy": "preserve",
+      "case_sensitive": true,
+      "whole_phrase": true,
+      "target_display": "Apply Root Motion",
+      "target_spoken": null
+    },
+    {
+      "source": "Inspector",
+      "domain": "unity",
+      "policy": "preserve",
+      "case_sensitive": true,
+      "whole_phrase": true,
+      "target_display": "Inspector",
+      "target_spoken": null
+    },
+    {
+      "source": "gross margin",
+      "domain": "business",
+      "policy": "translate",
+      "case_sensitive": false,
+      "whole_phrase": true,
+      "target_display": "biên lợi nhuận gộp",
+      "target_spoken": null
+    }
+  ],
+  "note_vi": "Spoken để null cho tới khi nghe thử; không áp dụng business glossary cho margin nghĩa lề trang."
+}

@@ -1,0 +1,72 @@
+{
+  "config_version": 1,
+  "runtime": {
+    "bind_host": "127.0.0.1",
+    "broker_port": 8765,
+    "llama_port": 8766,
+    "translation_model_id": "qwen35_4b_q5",
+    "context_tokens": 4096,
+    "parallel_requests": 1,
+    "max_output_tokens": 512,
+    "thinking": false,
+    "telemetry": false
+  },
+  "translation": {
+    "source_language": "en",
+    "target_language": "vi",
+    "topic": "general",
+    "context_before": 2,
+    "context_after": 1,
+    "max_units_per_batch": 3,
+    "max_source_words_per_batch": 120,
+    "max_source_words_per_unit": 60,
+    "max_unit_ms": 12000,
+    "repair_attempts": 1,
+    "prompt_version": "translation-1.0"
+  },
+  "tts": {
+    "provider": "vieneu_sdk_local",
+    "sdk_baseline": "3.8.1",
+    "mode": "v3turbo",
+    "backend_preference": "cuda",
+    "voice_preference_label": "Minh Quân",
+    "voice_id": null,
+    "alternate_speakers": true,
+    "voice_alt_id": "",
+    "max_batch_size": 2,
+    "allow_cloud": false
+  },
+  "asr": {
+    "provider": "faster_whisper",
+    "model": "small.en",
+    "device": "cpu",
+    "compute_type": "int8",
+    "enabled_on_demand": true,
+    "sample_rate": 16000,
+    "raw_audio_disk": false
+  },
+  "playback": {
+    "mode": "vod_sync",
+    "prefetch_target_ms": 30000,
+    "low_water_ms": 8000,
+    "high_water_ms": 45000,
+    "schedule_horizon_ms": 2000,
+    "original_gain": 0.15,
+    "vietnamese_gain": 1.0,
+    "residual_stretch_max": 1.15,
+    "auto_hold_vod": true,
+    "live_queue_hard_cap_ms": 30000
+  },
+  "storage": {
+    "cache_limit_bytes": 2147483648,
+    "cache_ttl_days": 14,
+    "history_opt_in": false,
+    "private_mode": false
+  },
+  "privacy": {
+    "cloud_inference": false,
+    "upload_diagnostics": false,
+    "payload_logs": false,
+    "start_with_windows": false
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "catalog_version": 2,
+  "checked_date": "2026-09-23",
+  "release_ready": false,
+  "note_vi": "Revision + SHA lấy từ HuggingFace API lúc ghim; tệp tải về phải khớp mới được nạp. Không tải mmproj cho text-only.",
+  "models": [
+    {
+      "id": "qwen35_4b_q5",
+      "kind": "translation",
+      "family": "qwen3.5",
+      "role": "initial_default",
+      "origin_model": "Qwen/Qwen3.5-4B",
+      "repo": "unsloth/Qwen3.5-4B-GGUF",
+      "files": [
+        {
+          "path": "Qwen3.5-4B-Q5_K_M.gguf",
+          "size": 3143656608,
+          "sha256": "8814232b85594dcd46c50e5b8b29324a7efe9e746edbe8a3d1df3d3fce7aad39",
+          "git_sha1": null
+        }
+      ],
+      "quant": "Q5_K_M",
+      "license": "apache-2.0",
+      "source_ids": [
+        "S04",
+        "S05"
+      ],
+      "profile": "qwen_non_thinking",
+      "label_vi": "Qwen3.5 4B — cân bằng (Q5_K_M)",
+      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "size_bytes": 3143656608,
+      "approx_decimal_gb": 3.14,
+      "verified_upstream": true
+    },
+    {
+      "id": "qwen35_4b_q4",
+      "kind": "translation",
+      "family": "qwen3.5",
+      "role": "light_candidate",
+      "origin_model": "Qwen/Qwen3.5-4B",
+      "repo": "unsloth/Qwen3.5-4B-GGUF",
+      "files": [
+        {
+          "path": "Qwen3.5-4B-Q4_K_M.gguf",
+          "size": 2740937888,
+          "sha256": "00fe7986ff5f6b463e62455821146049db6f9313603938a70800d1fb69ef11a4",
+          "git_sha1": null
+        }
+      ],
+      "quant": "Q4_K_M",
+      "license": "apache-2.0",
+      "source_ids": [
+        "S04",
+        "S05"
+      ],
+      "profile": "qwen_non_thinking",
+      "label_vi": "Qwen3.5 4B — nhẹ (Q4_K_M)",
+      "revision": "e87f176479d0855a907a41277aca2f8ee7a09523",
+      "size_bytes": 2740937888,
+      "approx_decimal_gb": 2.74,
+      "verified_upstream": true
+    },
+    {
+      "id": "gemma4_e4b_qat",
+      "kind": "translation",
+      "family": "gemma4",
+      "role": "quality_challenger",
+      "origin_model": "google/gemma-4-E4B-it",
+      "repo": "google/gemma-4-E4B-it-qat-q4_0-gguf",
+      "files": [
+        {
+          "path": "gemma-4-E4B_q4_0-it.gguf",
+          "size": 5154941280,
+          "sha256": "676c35070db6dbe52f93e9c864ee0fba4eddea94b9c875d9cb10daff453fbaee",
+          "git_sha1": null
+        }
+      ],
+      "quant": "QAT_Q4_0",
+      "license": "apache-2.0",
+      "source_ids": [
+        "S01",
+        "S02"
+      ],
+      "profile": "gemma_non_thinking",
+      "label_vi": "Gemma 4 E4B QAT — đối chứng",
+      "revision": "4b4a2c1d584be7264f87aac328a1bc739ce81b6c",
+      "size_bytes": 5154941280,
+      "approx_decimal_gb": 5.15,
+      "verified_upstream": true
+    },
+    {
+      "id": "gemma4_e2b_qat",
+      "kind": "translation",
+      "family": "gemma4",
+      "role": "optional_candidate",
+      "origin_model": "google/gemma-4-E2B-it",
+      "repo": "google/gemma-4-E2B-it-qat-q4_0-gguf",
+      "files": [
+        {
+          "path": "gemma-4-E2B_q4_0-it.gguf",
+          "size": 3349516256,
+          "sha256": "fa401b55b07ee70a54c6dae3903c783a6e65064312529ea57175cb5f8dec6634",
+          "git_sha1": null
+        }
+      ],
+      "quant": "QAT_Q4_0",
+      "license": "apache-2.0",
+      "source_ids": [
+        "S01",
+        "S03"
+      ],
+      "profile": "gemma_non_thinking",
+      "label_vi": "Gemma 4 E2B QAT — tùy chọn",
+      "revision": "675cff42a74c774d6cb76f76d8eacb49b48c9b93",
+      "size_bytes": 3349516256,
+      "approx_decimal_gb": 3.35,
+      "verified_upstream": true
+    },
+    {
+      "id": "whisper_small_en",
+      "kind": "asr",
+      "family": "faster-whisper",
+      "role": "asr_default",
+      "origin_model": "openai/whisper-small.en",
+      "repo": "Systran/faster-whisper-small.en",
+      "files": [
+        {
+          "path": "config.json",
+          "size": 2657,
+          "sha256": null,
+          "git_sha1": "ced3fd5bbb3e9f7664658065d2d36164712cf1d5"
+        },
+        {
+          "path": "model.bin",
+          "size": 483545366,
+          "sha256": "62b2a45b05ee59acb4a5341b33ee35e041395d378d418a18acfe4c9e768ee37a",
+          "git_sha1": null
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 2128466,
+          "sha256": null,
+          "git_sha1": "15d7bdf9ba25718ca2504eec6a8f02bc55af0a6a"
+        },
+        {
+          "path": "vocabulary.txt",
+          "size": 422309,
+          "sha256": null,
+          "git_sha1": "ee695b8d3e3c10d488304e04468efec4ca27554a"
+        }
+      ],
+      "quant": "float16->int8 runtime",
+      "license": "mit",
+      "source_ids": [
+        "S23"
+      ],
+      "label_vi": "Nhận dạng tiếng Anh small.en (CPU)",
+      "revision": "d1d751a5f8271d482d14ca55d9e2deeebbae577f",
+      "size_bytes": 486098798,
+      "approx_decimal_gb": 0.49,
+      "verified_upstream": true
+    },
+    {
+      "id": "vieneu_v3_turbo",
+      "kind": "tts",
+      "family": "vieneu",
+      "role": "tts_default",
+      "origin_model": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "repo": "pnnbao-ump/VieNeu-TTS-v3-Turbo",
+      "files": [
+        {
+          "path": "config.json",
+          "size": 1553,
+          "sha256": null,
+          "git_sha1": "aa9c4e4550e8b9cf06ee47ad16009ef9609c8928"
+        },
+        {
+          "path": "denoiser.onnx",
+          "size": 42661414,
+          "sha256": "b7621953291cfe05e695a9c0ff4255aa2f93239fc17c26627e18b7b6b8f72f0b",
+          "git_sha1": null
+        },
+        {
+          "path": "speaker_encoder.onnx",
+          "size": 28303423,
+          "sha256": "a6ac6a63997761ae2997373e2ee1c47040854b4b759ea41ec48e4e42df0f4d73",
+          "git_sha1": null
+        },
+        {
+          "path": "update/config.json",
+          "size": 2152,
+          "sha256": null,
+          "git_sha1": "0f5d73f1779b514b9cd5692faeeb438898aeb36f"
+        },
+        {
+          "path": "update/model.safetensors",
+          "size": 247974928,
+          "sha256": "119003a9e121760d1c3b9b50bd675bfde8d5f3de2b12641cf97a17d3883a5da7",
+          "git_sha1": null
+        },
+        {
+          "path": "update/special_tokens_map.json",
+          "size": 1108,
+          "sha256": null,
+          "git_sha1": "7857da5dcab823f7487da44c8c91b73692da3a62"
+        },
+        {
+          "path": "update/tokenizer.json",
+          "size": 22320,
+          "sha256": null,
+          "git_sha1": "5c9785c19639481f69f407f8b96859f0ea0d65af"
+        },
+        {
+          "path": "update/tokenizer_config.json",
+          "size": 8617,
+          "sha256": null,
+          "git_sha1": "90be93d49d1629f8f1f802a9e8150447fff6d1a6"
+        }
+      ],
+      "hf_layout": true,
+      "quant": "fp32/bf16",
+      "license": "apache-2.0",
+      "source_ids": [
+        "S11",
+        "S12"
+      ],
+      "label_vi": "Giọng VieNeu v3 Turbo",
+      "revision": "61b85e3d937fbbacb387714180e8182823512523",
+      "size_bytes": 318975515,
+      "approx_decimal_gb": 0.32,
+      "verified_upstream": true
+    },
+    {
+      "id": "moss_audio_tokenizer_nano",
+      "kind": "tts_dep",
+      "family": "moss",
+      "role": "tts_codec",
+      "origin_model": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano",
+      "repo": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano",
+      "files": [
+        {
+          "path": "config.json",
+          "size": 7385,
+          "sha256": null,
+          "git_sha1": "1789fbb15e81a782e83a726998b7c910aade93cf"
+        },
+        {
+          "path": "configuration_moss_audio_tokenizer.py",
+          "size": 19249,
+          "sha256": null,
+          "git_sha1": "2efd84a7f1b9682d530616e434b13b8dec560136"
+        },
+        {
+          "path": "model-00001-of-00001.safetensors",
+          "size": 87922568,
+          "sha256": "34d9880d805eecb21bde975202b1c256dbd0eb98c8680b9d3aeffd2bc6ac2f67",
+          "git_sha1": null
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "size": 34346,
+          "sha256": null,
+          "git_sha1": "c1e82d52cc62a951fa73edf0df3980215c516832"
+        },
+        {
+          "path": "modeling_moss_audio_tokenizer.py",
+          "size": 138814,
+          "sha256": null,
+          "git_sha1": "17fc9d059a1dc0fede4cfd1dfed2cffaef70a4c1"
+        }
+      ],
+      "hf_layout": true,
+      "quant": "fp32",
+      "license": "apache-2.0",
+      "source_ids": [
+        "S12"
+      ],
+      "label_vi": "Bộ mã âm thanh MOSS (đi kèm VieNeu)",
+      "revision": "6aa02b01e445cc585582cf0ba480bc3ea6c8dd68",
+      "size_bytes": 88122362,
+      "approx_decimal_gb": 0.09,
+      "verified_upstream": true
+    }
+  ]
+}

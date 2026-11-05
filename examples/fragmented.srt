@@ -1,0 +1,15 @@
+1
+00:00:10,000 --> 00:00:12,000
+Make sure you don't
+
+2
+00:00:12,000 --> 00:00:14,000
+delete the original file
+
+3
+00:00:14,000 --> 00:00:16,000
+before checking the copy.
+
+4
+00:00:17,000 --> 00:00:21,000
+Open the Inspector and uncheck Apply Root Motion.

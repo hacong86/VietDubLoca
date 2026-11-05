@@ -1,0 +1,4 @@
+# Baseline tài liệu 23/09/2026, chưa là lock đã resolve trên máy đích.
+# Cài torch/torchaudio CUDA 2.8.0 riêng theo docs/16 và SDK chính thức.
+vieneu==3.8.1
+transformers==4.57.6

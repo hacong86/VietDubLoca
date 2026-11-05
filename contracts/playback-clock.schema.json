@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PlaybackClock",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "timeline_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "video_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "media_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "monotonic_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "playback_rate": {
+      "type": "number",
+      "minimum": 0.25,
+      "maximum": 4
+    },
+    "paused": {
+      "type": "boolean"
+    },
+    "seeking": {
+      "type": "boolean"
+    },
+    "stalled": {
+      "type": "boolean"
+    },
+    "ad_state": {
+      "enum": [
+        "content",
+        "ad",
+        "unknown"
+      ]
+    },
+    "visibility": {
+      "enum": [
+        "visible",
+        "hidden"
+      ]
+    }
+  },
+  "required": [
+    "session_id",
+    "timeline_epoch",
+    "video_id",
+    "media_ms",
+    "monotonic_ms",
+    "playback_rate",
+    "paused",
+    "seeking",
+    "stalled",
+    "ad_state",
+    "visibility"
+  ]
+}

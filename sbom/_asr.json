@@ -1,0 +1,218 @@
+[
+ {
+  "name": "anyio",
+  "version": "4.15.1",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "av",
+  "version": "18.1.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "brotli",
+  "version": "1.2.0",
+  "license": "MIT",
+  "home": "https://github.com/google/brotli"
+ },
+ {
+  "name": "certifi",
+  "version": "2026.7.22",
+  "license": "Mozilla Public License 2.0 (MPL 2.0)",
+  "home": "https://github.com/certifi/python-certifi"
+ },
+ {
+  "name": "charset-normalizer",
+  "version": "3.5.1",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "click",
+  "version": "8.5.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "colorama",
+  "version": "0.4.6",
+  "license": "BSD License",
+  "home": ""
+ },
+ {
+  "name": "ctranslate2",
+  "version": "4.8.2",
+  "license": "MIT",
+  "home": "https://opennmt.net"
+ },
+ {
+  "name": "faster-whisper",
+  "version": "1.2.1",
+  "license": "MIT License",
+  "home": "https://github.com/SYSTRAN/faster-whisper"
+ },
+ {
+  "name": "feedparser-sgmllib",
+  "version": "2.1.0",
+  "license": "PSF-2.0",
+  "home": ""
+ },
+ {
+  "name": "filelock",
+  "version": "4.0.1",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "flatbuffers",
+  "version": "25.12.19",
+  "license": "Apache Software License",
+  "home": "https://google.github.io/flatbuffers/"
+ },
+ {
+  "name": "fsspec",
+  "version": "2026.9.0",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "h11",
+  "version": "0.16.0",
+  "license": "MIT License",
+  "home": "https://github.com/python-hyper/h11"
+ },
+ {
+  "name": "hf-xet",
+  "version": "1.6.0",
+  "license": "Apache-2.0",
+  "home": ""
+ },
+ {
+  "name": "httpcore",
+  "version": "1.0.9",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "httpx",
+  "version": "0.28.1",
+  "license": "BSD License",
+  "home": ""
+ },
+ {
+  "name": "huggingface_hub",
+  "version": "1.32.0",
+  "license": "Apache Software License",
+  "home": "https://github.com/huggingface/huggingface_hub"
+ },
+ {
+  "name": "idna",
+  "version": "3.20",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "mutagen",
+  "version": "1.48.1",
+  "license": "GPL-2.0-or-later",
+  "home": ""
+ },
+ {
+  "name": "numpy",
+  "version": "2.4.6",
+  "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+  "home": ""
+ },
+ {
+  "name": "nvidia-cublas-cu12",
+  "version": "12.9.2.10",
+  "license": "LicenseRef-NVIDIA-Proprietary",
+  "home": "https://developer.nvidia.com/cuda-zone"
+ },
+ {
+  "name": "nvidia-cuda-nvrtc-cu12",
+  "version": "12.9.86",
+  "license": "Other/Proprietary License",
+  "home": "https://developer.nvidia.com/cuda-zone"
+ },
+ {
+  "name": "nvidia-cudnn-cu12",
+  "version": "9.26.0.51",
+  "license": "LicenseRef-NVIDIA-Proprietary",
+  "home": "https://developer.nvidia.com/cuda-zone"
+ },
+ {
+  "name": "onnxruntime",
+  "version": "1.30.0",
+  "license": "MIT License",
+  "home": "https://onnxruntime.ai"
+ },
+ {
+  "name": "packaging",
+  "version": "26.3",
+  "license": "Apache-2.0 OR BSD-2-Clause",
+  "home": ""
+ },
+ {
+  "name": "protobuf",
+  "version": "7.36.2",
+  "license": "3-Clause BSD License",
+  "home": "https://developers.google.com/protocol-buffers/"
+ },
+ {
+  "name": "pycryptodomex",
+  "version": "3.23.0",
+  "license": "BSD License; Public Domain",
+  "home": "https://www.pycryptodome.org"
+ },
+ {
+  "name": "PyYAML",
+  "version": "6.0.3",
+  "license": "MIT License",
+  "home": "https://pyyaml.org/"
+ },
+ {
+  "name": "requests",
+  "version": "2.34.2",
+  "license": "Apache Software License",
+  "home": ""
+ },
+ {
+  "name": "tokenizers",
+  "version": "0.23.2",
+  "license": "Apache Software License",
+  "home": ""
+ },
+ {
+  "name": "tqdm",
+  "version": "4.70.1",
+  "license": "MPL-2.0 AND MIT",
+  "home": ""
+ },
+ {
+  "name": "typing_extensions",
+  "version": "4.16.0",
+  "license": "PSF-2.0",
+  "home": ""
+ },
+ {
+  "name": "urllib3",
+  "version": "2.8.0",
+  "license": "MIT",
+  "home": ""
+ },
+ {
+  "name": "websockets",
+  "version": "17.1",
+  "license": "BSD-3-Clause",
+  "home": ""
+ },
+ {
+  "name": "yt-dlp-ejs",
+  "version": "0.8.0",
+  "license": "Unlicense AND MIT AND ISC",
+  "home": ""
+ }
+]

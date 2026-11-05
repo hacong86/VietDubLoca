@@ -1,0 +1,33 @@
+{
+  "name": "vietdub-local",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "version": "0.1.1",
+  "type": "module",
+  "scripts": {
+    "build": "node apps/extension/build.mjs",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "test:py": ".venv-broker/Scripts/python.exe -m pytest -q tests/python"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.1"
+  },
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  }
+}

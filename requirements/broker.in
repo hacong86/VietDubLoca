@@ -1,0 +1,12 @@
+# Môi trường broker/companion (không GPU). Lock sinh bằng: uv pip compile --generate-hashes
+fastapi
+uvicorn
+websockets
+pydantic>=2
+httpx
+jsonschema
+numpy
+psutil
+pystray
+pillow
+pyyaml

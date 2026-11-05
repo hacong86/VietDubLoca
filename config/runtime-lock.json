@@ -1,0 +1,45 @@
+{
+  "release_ready": false,
+  "reason_vi": "Đã smoke-test trên máy đích (Windows 10 Pro, RTX 3060 12 GB). Chưa cài trên tài khoản Windows sạch và chưa có chữ ký số.",
+  "tested_on": "2026-09-23",
+  "os": "Windows 10 Pro for Workstations 10.0.19045 x64",
+  "gpu": "NVIDIA GeForce RTX 3060 12 GB",
+  "cuda_driver_tested": "616.92",
+  "python_version": "3.11.16 (uv-managed, cpython-3.11.16-windows-x86_64-none)",
+  "broker_lock": "requirements/broker.lock.txt (uv pip compile --generate-hashes)",
+  "llama_cpp_build": "b11126 (commit b1ff4ca23) CUDA 13.4 x64",
+  "llama_cpp_artifacts": {
+    "llama-b11126-bin-win-cuda-13.4-x64.zip": "89a12974964ec2ed423cdcf7ba80fb9bfe36d3dbddb38cc978ea9d7858f943d6",
+    "cudart-llama-bin-win-cuda-13.4-x64.zip": "738f8c251ac22b70c3ae6f83a10cf222725df0395246a2cf58f32bdb85fbe668"
+  },
+  "llama_cpp_source": "https://github.com/ggml-org/llama.cpp/releases/tag/b11126 (digest khớp GitHub API)",
+  "node_version": "22.22.2",
+  "pnpm_version": "10.10.0",
+  "browser_version_tested": "Chrome 153.0.8010.53",
+  "tts_sdk": "vieneu 3.8.1 (torch 2.8.0+cu128, transformers 4.57.6) — requirements/tts.lock.txt",
+  "tts_model_revision": "pnnbao-ump/VieNeu-TTS-v3-Turbo@61b85e3d937fbbacb387714180e8182823512523",
+  "tts_codec_revision": "OpenMOSS-Team/MOSS-Audio-Tokenizer-Nano@6aa02b01e445cc585582cf0ba480bc3ea6c8dd68",
+  "asr_runtime_version": "faster-whisper 1.2.1, ctranslate2 4.8.2 — requirements/asr.lock.txt",
+  "asr_model_revision": "Systran/faster-whisper-small.en@d1d751a5f8271d482d14ca55d9e2deeebbae577f",
+  "translation_model": "unsloth/Qwen3.5-4B-GGUF@e87f176479d0855a907a41277aca2f8ee7a09523 Qwen3.5-4B-Q5_K_M.gguf sha256 8814232b85594dcd46c50e5b8b29324a7efe9e746edbe8a3d1df3d3fce7aad39",
+  "locks_generated": true,
+  "llama_runtime": {
+    "build": "b11126-cuda13.4 (commit b1ff4ca23)",
+    "zips": [
+      {
+        "name": "llama-b11126-bin-win-cuda-13.4-x64.zip",
+        "sha256": "89a12974964ec2ed423cdcf7ba80fb9bfe36d3dbddb38cc978ea9d7858f943d6",
+        "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11126/llama-b11126-bin-win-cuda-13.4-x64.zip",
+        "size": 0
+      },
+      {
+        "name": "cudart-llama-bin-win-cuda-13.4-x64.zip",
+        "sha256": "738f8c251ac22b70c3ae6f83a10cf222725df0395246a2cf58f32bdb85fbe668",
+        "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11126/cudart-llama-bin-win-cuda-13.4-x64.zip",
+        "size": 0
+      }
+    ],
+    "server_sha256": "b8bb8432696118cf28c5b8538d037f437b8b447b9e25e9b000b4814a058bd2b2",
+    "directory": "b11126-cuda13.4"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "session_id": "fixture-session-1",
+  "timeline_epoch": 0,
+  "video_id": "fixture-video",
+  "media_ms": 10000,
+  "monotonic_ms": 100000.5,
+  "playback_rate": 1,
+  "paused": false,
+  "seeking": false,
+  "stalled": false,
+  "ad_state": "content",
+  "visibility": "visible"
+}

@@ -1,0 +1,76 @@
+{
+  "catalog_version": 1,
+  "checked_date": "2026-09-23",
+  "release_ready": false,
+  "note_vi": "Danh mục nguồn, chưa là manifest phát hành. SHA/revision phải lấy từ artifact thực đã tải và xác minh; không tự tải mmproj cho text-only.",
+  "models": [
+    {
+      "id": "qwen35_4b_q5",
+      "family": "qwen3.5",
+      "role": "initial_default",
+      "origin_model": "Qwen/Qwen3.5-4B",
+      "artifact_repo": "unsloth/Qwen3.5-4B-GGUF",
+      "filename": "Qwen3.5-4B-Q5_K_M.gguf",
+      "quant": "Q5_K_M",
+      "approx_decimal_gb": 3.14,
+      "source_ids": [
+        "S04",
+        "S05"
+      ],
+      "revision": null,
+      "sha256": null,
+      "verified": false
+    },
+    {
+      "id": "qwen35_4b_q4",
+      "family": "qwen3.5",
+      "role": "light_candidate",
+      "origin_model": "Qwen/Qwen3.5-4B",
+      "artifact_repo": "unsloth/Qwen3.5-4B-GGUF",
+      "filename": "Qwen3.5-4B-Q4_K_M.gguf",
+      "quant": "Q4_K_M",
+      "approx_decimal_gb": 2.74,
+      "source_ids": [
+        "S04",
+        "S05"
+      ],
+      "revision": null,
+      "sha256": null,
+      "verified": false
+    },
+    {
+      "id": "gemma4_e4b_qat",
+      "family": "gemma4",
+      "role": "quality_challenger",
+      "origin_model": "google/gemma-4-E4B-it",
+      "artifact_repo": "google/gemma-4-E4B-it-qat-q4_0-gguf",
+      "filename": "gemma-4-E4B_q4_0-it.gguf",
+      "quant": "QAT_Q4_0",
+      "approx_decimal_gb": 5.15,
+      "source_ids": [
+        "S01",
+        "S02"
+      ],
+      "revision": null,
+      "sha256": null,
+      "verified": false
+    },
+    {
+      "id": "gemma4_e2b_qat",
+      "family": "gemma4",
+      "role": "optional_candidate",
+      "origin_model": "google/gemma-4-E2B-it",
+      "artifact_repo": "google/gemma-4-E2B-it-qat-q4_0-gguf",
+      "filename": "gemma-4-E2B_q4_0-it.gguf",
+      "quant": "QAT_Q4_0",
+      "approx_decimal_gb": 3.35,
+      "source_ids": [
+        "S01",
+        "S03"
+      ],
+      "revision": null,
+      "sha256": null,
+      "verified": false
+    }
+  ]
+}

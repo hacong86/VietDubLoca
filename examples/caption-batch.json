@@ -1,0 +1,33 @@
+{
+  "session_id": "fixture-session-1",
+  "timeline_epoch": 0,
+  "source_id": "fixture-en",
+  "source_revision": 1,
+  "source_kind": "import",
+  "language": "en",
+  "coverage": "full",
+  "available_until_ms": 16000,
+  "cues": [
+    {
+      "cue_id": "c1",
+      "start_ms": 10000,
+      "end_ms": 12000,
+      "text": "Make sure you don't",
+      "committed": true
+    },
+    {
+      "cue_id": "c2",
+      "start_ms": 12000,
+      "end_ms": 14000,
+      "text": "delete the original file",
+      "committed": true
+    },
+    {
+      "cue_id": "c3",
+      "start_ms": 14000,
+      "end_ms": 16000,
+      "text": "before checking the copy.",
+      "committed": true
+    }
+  ]
+}

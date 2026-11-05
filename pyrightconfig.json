@@ -1,0 +1,7 @@
+{
+  "extraPaths": ["services"],
+  "venvPath": ".",
+  "venv": ".venv-broker",
+  "exclude": [".venv-broker", "node_modules", "apps/extension/node_modules", ".local"],
+  "reportOptionalMemberAccess": "warning"
+}

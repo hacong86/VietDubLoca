@@ -1,0 +1,14 @@
+{
+  "protocol_version": 1,
+  "kind": "tts_pcm",
+  "session_id": "fixture-session-1",
+  "timeline_epoch": 0,
+  "segment_id": "u1",
+  "revision": 1,
+  "seq": 0,
+  "sample_rate": 48000,
+  "channels": 1,
+  "codec": "pcm_s16le",
+  "sample_count": 4800,
+  "is_last": false
+}

@@ -1,0 +1,36 @@
+{
+  "profile_version": 1,
+  "profiles": {
+    "qwen_non_thinking": {
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "top_k": 20,
+      "seed": 42,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      },
+      "reasoning_effort": "none"
+    },
+    "gemma_non_thinking": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 64,
+      "seed": 42,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      },
+      "reasoning_effort": "none"
+    },
+    "low_temperature_experiment": {
+      "temperature": 0.2,
+      "top_p": 0.9,
+      "top_k": 40,
+      "seed": 42,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      },
+      "reasoning_effort": "none"
+    }
+  },
+  "note_vi": "Thông số baseline/thí nghiệm, không phải preset đo thắng. Gemma phải kiểm template không chèn <|think|>; option enable_thinking phụ thuộc hỗ trợ của runtime/template, không chỉ tin flag."
+}

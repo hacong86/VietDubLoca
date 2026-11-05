@@ -1,0 +1,12 @@
+Required Notice: Copyright 2026 AppMavenStudio (https://github.com/hacong86)
+
+VietDub Local original project code and documentation are offered under
+the PolyForm Noncommercial License 1.0.0. See LICENSE.
+
+Third-party libraries, tools and model weights retain their own licenses.
+This license does not replace or restrict permissions granted by their
+respective copyright holders. See THIRD_PARTY_NOTICES.md and
+THIRD_PARTY_LICENSES/ for bundled dependencies.
+
+Model weights and Python/runtime dependencies are downloaded separately
+with user consent. They are not licensed under the project's PolyForm terms.

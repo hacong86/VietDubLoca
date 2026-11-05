@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EventEnvelope",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "protocol_version": {
+      "const": 1
+    },
+    "event": {
+      "enum": [
+        "auth.ok",
+        "auth.error",
+        "session.state",
+        "source.changed",
+        "translation.ready",
+        "translation.blocked",
+        "audio.begin",
+        "audio.end",
+        "audio.stop",
+        "audio.stopped",
+        "queue.status",
+        "model.progress",
+        "warning",
+        "error",
+        "ping",
+        "pong",
+        "asr.draft"
+      ]
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "timeline_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sent_monotonic_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "protocol_version",
+    "event",
+    "request_id",
+    "session_id",
+    "timeline_epoch",
+    "seq",
+    "sent_monotonic_ms",
+    "payload"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "release_ready": false,
+  "reason_vi": "Cần resolve và smoke-test trên Windows/GPU thật trước khi tạo lock phát hành.",
+  "python_version": null,
+  "llama_cpp_build": null,
+  "llama_cpp_sha256": null,
+  "node_version": null,
+  "browser_version_tested": null,
+  "cuda_driver_tested": null,
+  "tts_sdk_baseline": "3.8.1",
+  "tts_model_revision": null,
+  "asr_runtime_version": null,
+  "locks_generated": false
+}

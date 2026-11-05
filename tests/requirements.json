@@ -1,0 +1,317 @@
+[
+  {
+    "id": "FR-001",
+    "group": "Cài đặt",
+    "title": "Kiểm tra môi trường",
+    "detail": "Phát hiện OS x64, Python/runtime đóng gói, GPU/driver, RAM, ổ đĩa và model có sẵn. Không suy VRAM trống từ dung lượng nhãn GPU.",
+    "acceptance": "Hiện nguồn đo và lỗi hành động được; không hiện Sẵn sàng nếu dependency/model thiếu."
+  },
+  {
+    "id": "FR-002",
+    "group": "Cài đặt",
+    "title": "Model manager",
+    "detail": "Hiện model, quant, nguồn, cỡ download, trạng thái kiểm checksum; tải có đồng ý, pause/resume, retry và nhập tệp local.",
+    "acceptance": "Không tải mmproj ở text-only; file .part không được load; checksum sai phải chặn."
+  },
+  {
+    "id": "FR-003",
+    "group": "Cài đặt",
+    "title": "Ghép nối extension–companion",
+    "detail": "Native Messaging kiểm extension ID và trả token phiên qua kênh riêng, chỉ loopback; onboarding hướng dẫn trong side panel.",
+    "acceptance": "Trang YouTube không đọc được token; companion dừng thì có thông báo và nút kết nối lại."
+  },
+  {
+    "id": "FR-004",
+    "group": "Cài đặt",
+    "title": "Tự khởi động có lựa chọn",
+    "detail": "Có tùy chọn khởi động cùng Windows, tray trạng thái và thoát; mặc định không tự bật startup.",
+    "acceptance": "Thoát phải ngừng thu/phát và không còn worker con mồ côi do app tạo."
+  },
+  {
+    "id": "FR-005",
+    "group": "Nguồn",
+    "title": "Phát hiện video và nguồn caption",
+    "detail": "Theo dõi SPA navigation, video ID, track en/en-US/en-GB, caption thủ công/auto và khả năng đọc trước.",
+    "acceptance": "Chuyển video không dùng transcript cũ; ưu tiên track tiếng Anh thủ công nếu có."
+  },
+  {
+    "id": "FR-006",
+    "group": "Nguồn",
+    "title": "Lấy transcript có kiểm soát",
+    "detail": "Adapter thử nguồn trang công khai trong phiên người dùng; transcript DOM có phân trang/ảo hóa; không đoán đã đủ từ vài dòng visible.",
+    "acceptance": "Gắn coverage full/partial/current_only và available_until_ms đúng; timeout chuyển nguồn có thông báo."
+  },
+  {
+    "id": "FR-007",
+    "group": "Nguồn",
+    "title": "Nhập SRT/VTT",
+    "detail": "Người dùng nhập phụ đề họ có quyền dùng; hỗ trợ UTF-8/BOM, line ending, cue overlap, offset chỉnh tay.",
+    "acceptance": "Tệp lỗi không crash; hiển thị dòng lỗi; không chạy markup/script trong caption."
+  },
+  {
+    "id": "FR-008",
+    "group": "Nguồn",
+    "title": "Dự phòng ASR local",
+    "detail": "Xin tabCapture khi người dùng bấm; mono 16k PCM vào faster-whisper; không lấy microphone.",
+    "acceptance": "Từ chối quyền không làm hỏng caption mode; ASR không chạy khi caption đủ."
+  },
+  {
+    "id": "FR-009",
+    "group": "Nguồn",
+    "title": "Ổn định ASR và chống lặp",
+    "detail": "VAD, cửa sổ overlap, commit phần ổn định, word-time optional; không gửi draft còn sửa sang TTS.",
+    "acceptance": "Hai cửa sổ chứa cùng lời nói chỉ phát một lần; chữ draft được phân biệt trên UI."
+  },
+  {
+    "id": "FR-010",
+    "group": "Dịch",
+    "title": "Ghép cụm đủ nghĩa",
+    "detail": "Khôi phục dấu câu thận trọng, gộp cue theo ranh giới ý với time map còn nguyên; giữ phủ định/điều kiện.",
+    "acceptance": "Fixture câu bị cắt giữa dòng cho một đơn vị dịch đúng thứ tự, không tự sửa timestamps bằng LLM."
+  },
+  {
+    "id": "FR-011",
+    "group": "Dịch",
+    "title": "Ngữ cảnh giới hạn",
+    "detail": "Hai đơn vị trước, một đơn vị sau nếu có, chủ đề do người dùng chọn và glossary; không suy nội dung video chưa thấy.",
+    "acceptance": "Prompt có giới hạn token; context tham khảo không xuất hiện như câu được dịch thêm."
+  },
+  {
+    "id": "FR-012",
+    "group": "Dịch",
+    "title": "Dịch tiếng Việt tự nhiên đầy đủ",
+    "detail": "Giọng diễn đạt trung tính, dễ nghe, không lược ý, không bình luận, giữ ngôi và mức chắc chắn.",
+    "acceptance": "Qua chấm người theo rubric; câu phủ định/đơn vị/cảnh báo không được đảo hoặc mất."
+  },
+  {
+    "id": "FR-013",
+    "group": "Dịch",
+    "title": "Từ điển thuật ngữ",
+    "detail": "Thêm/sửa/xóa/nhập/xuất glossary; phân domain, case sensitivity, whole phrase, preserve/translate; bản ghi theo phiên bản.",
+    "acceptance": "Tên lệnh và thuộc tính protected phục hồi đủ; từ bank/margin không thay hàng loạt sai ngữ cảnh."
+  },
+  {
+    "id": "FR-014",
+    "group": "Dịch",
+    "title": "Bản hiển thị và bản đọc",
+    "detail": "target_display giữ code/tên gốc, target_spoken áp dụng từ điển phát âm và số/đơn vị có quy tắc.",
+    "acceptance": "Sửa phát âm không đổi chữ phụ đề hoặc semantic numbers; spoken text không đọc placeholder."
+  },
+  {
+    "id": "FR-015",
+    "group": "Dịch",
+    "title": "Kiểm tra trước TTS",
+    "detail": "JSON/ID/schema, placeholder, coverage, length warning, ngôn ngữ heuristic, dấu reasoning/tool call; tối đa một repair.",
+    "acceptance": "Kết quả sai cấu trúc bị chặn; từ ngoại ngữ/tên riêng hợp lệ không bị cấm máy móc."
+  },
+  {
+    "id": "FR-016",
+    "group": "Dịch",
+    "title": "Sửa và dịch lại câu",
+    "detail": "Panel cho chỉnh bản Việt, nghe preview, lưu override, hoặc dịch lại đơn vị; giữ lịch sử revision.",
+    "acceptance": "Audio revision cũ hủy; override còn sau mở lại video và được đánh dấu do người dùng sửa."
+  },
+  {
+    "id": "FR-017",
+    "group": "Dịch",
+    "title": "Đổi model/preset",
+    "detail": "Chọn Qwen Q5/Q4 hoặc Gemma đã tải; tắt thinking đúng template; chuyển model có unloading.",
+    "acceptance": "Chỉ một model dịch resident; preset và fingerprint xuất hiện trong diagnostic/cache key."
+  },
+  {
+    "id": "FR-018",
+    "group": "TTS",
+    "title": "VieNeu Turbo local",
+    "detail": "Tạo âm thanh bằng SDK v3 Turbo hoặc adapter compatible local theo contract; không gọi cloud.",
+    "acceptance": "Mạng AI egress bị chặn mà model đã tải vẫn dịch và nói được từ fixture local."
+  },
+  {
+    "id": "FR-019",
+    "group": "TTS",
+    "title": "Chọn và nghe thử giọng",
+    "detail": "Lấy danh sách giọng từ SDK runtime; tìm kiếm/nghe thử/chọn; không hard-code tổng số giọng.",
+    "acceptance": "Voice ID không còn hợp lệ báo rõ và yêu cầu chọn preset khác; không tự đổi giọng âm thầm."
+  },
+  {
+    "id": "FR-020",
+    "group": "TTS",
+    "title": "Buffer câu và streaming",
+    "detail": "VOD tạo xong từng câu để biết duration; live cho streaming PCM nhưng chỉ từ bản dịch đã commit.",
+    "acceptance": "Audio ghi rõ sample rate/channel/seq/done; không coi mỗi HTTP chunk là một WAV riêng."
+  },
+  {
+    "id": "FR-021",
+    "group": "Phát",
+    "title": "Bật/tắt thuyết minh",
+    "detail": "Nút trên trang và side panel; khi tắt dừng audio/ASR và khôi phục audio gốc theo quyền sở hữu volume.",
+    "acceptance": "Không còn lời Việt sau thao tác tắt quá giới hạn stop latency; không tăng âm lượng do người dùng đã giảm."
+  },
+  {
+    "id": "FR-022",
+    "group": "Phát",
+    "title": "Âm lượng độc lập",
+    "detail": "Thanh tiếng Việt/tiếng gốc; capture route giảm gain sau điểm ASR; chế độ không capture có adapter volume riêng.",
+    "acceptance": "Giảm tiếng gốc không làm ASR mất tín hiệu; TTS không lọt vào nguồn ASR."
+  },
+  {
+    "id": "FR-023",
+    "group": "Phát",
+    "title": "Phụ đề Việt/song ngữ",
+    "detail": "Overlay bật/tắt, font/size/vị trí, tương phản, không đè nút quan trọng; panel theo câu đang xem.",
+    "acceptance": "Dấu tiếng Việt hiển thị đúng trong fullscreen/theater; thao tác bàn phím đọc được."
+  },
+  {
+    "id": "FR-024",
+    "group": "Phát",
+    "title": "Pause/play/seek",
+    "detail": "Dừng/tiếp tục theo vị trí thực; seek flush audio, tăng epoch và ưu tiên vị trí mới.",
+    "acceptance": "Kết quả worker cũ trả muộn bị bỏ; replay câu rõ ràng thay vì nối sai nửa câu."
+  },
+  {
+    "id": "FR-025",
+    "group": "Phát",
+    "title": "Đổi tốc độ video",
+    "detail": "Theo 0.5–2.0x, căn wall-time mới, time-stretch giữ pitch; nếu không đủ chuyển hold rõ ràng trong VOD.",
+    "acceptance": "Không double-speed do vừa đổi rate video vừa áp cùng rate sai lần nữa lên audio đã stretch."
+  },
+  {
+    "id": "FR-026",
+    "group": "Phát",
+    "title": "Buffering và quảng cáo",
+    "detail": "Khi video stalled/ad hoặc loại nội dung không xác định: hold tiếng Việt, khôi phục audio gốc quảng cáo.",
+    "acceptance": "Không phát lời nội dung trong quảng cáo; resume phải re-anchor timeline, không trừ duration quảng cáo bằng phỏng đoán."
+  },
+  {
+    "id": "FR-027",
+    "group": "Phát",
+    "title": "Chế độ đồng bộ VOD",
+    "detail": "Đọc trước nguồn có coverage, buffer thích nghi và auto-hold ngắn nếu cần để không bỏ câu.",
+    "acceptance": "UI phân biệt đang nạp giọng với đang chuẩn bị nội dung; không tuyên bố zero-latency."
+  },
+  {
+    "id": "FR-028",
+    "group": "Phát",
+    "title": "Chế độ trực tiếp có trễ",
+    "detail": "Live hoặc current_only ASR, hiển thị độ trễ; queue hữu hạn và cảnh báo không theo kịp.",
+    "acceptance": "Không lặng lẽ bỏ câu; queue overflow dừng tiếng Việt/báo lỗi và yêu cầu thao tác tiếp tục."
+  },
+  {
+    "id": "FR-029",
+    "group": "Phát",
+    "title": "Chế độ Học kỹ",
+    "detail": "Tự dừng ở cuối câu để đọc hết, nghe lại câu, tua tới câu, xem Anh–Việt; không tự tạo bài học ngoài nội dung.",
+    "acceptance": "Người dùng bấm pause luôn thắng auto-resume; audio nguồn không được kỳ vọng tiến khi video đã dừng."
+  },
+  {
+    "id": "FR-030",
+    "group": "Phát",
+    "title": "Một tab chủ động",
+    "detail": "Mỗi thời điểm chỉ một tab phát/thu; đổi tab bằng hành động người dùng, giải phóng tab trước.",
+    "acceptance": "Hai tab YouTube cùng mở không phát tiếng Việt chồng; tab nền không giành phiên."
+  },
+  {
+    "id": "FR-031",
+    "group": "Phát",
+    "title": "Chuyển video và mất tab",
+    "detail": "Hủy phiên khi SPA navigation/tab đóng/nguồn audio ended; resume sau lỗi phải revalidate video ID.",
+    "acceptance": "Không audio mồ côi và không caption cross-video."
+  },
+  {
+    "id": "FR-032",
+    "group": "Giao diện",
+    "title": "Side panel đầy đủ",
+    "detail": "Video/source/mode/translation/TTS/model/queue/CPU-GPU trạng thái, transcript, tìm kiếm, sửa câu, điều khiển.",
+    "acceptance": "Popup đóng không dừng phiên; panel có thể đóng mà audio engine vẫn đúng."
+  },
+  {
+    "id": "FR-033",
+    "group": "Giao diện",
+    "title": "Cài đặt và reset",
+    "detail": "Ngôn ngữ UI Việt, mức buffer, giọng, model, cache, quyền riêng tư, shortcut; reset có xác nhận và phạm vi.",
+    "acceptance": "Reset settings không xóa model/override nếu người dùng không chọn."
+  },
+  {
+    "id": "FR-034",
+    "group": "Giao diện",
+    "title": "Lỗi có hướng xử lý",
+    "detail": "Mã lỗi ổn định, thông báo Việt, retry/đổi nguồn/mở diagnostic; không hiển thị traceback hoặc token cho người dùng.",
+    "acceptance": "Mỗi mã lỗi có hành động hữu ích và error record đã redact."
+  },
+  {
+    "id": "FR-035",
+    "group": "Dữ liệu",
+    "title": "Cache bản dịch/âm thanh",
+    "detail": "Fingerprint source/context/model/prompt/glossary/voice; LRU và TTL; cache hit không chạy lại model.",
+    "acceptance": "Đổi model/giọng/override không lấy nhầm audio; cue giống text nhưng khác context không đụng key."
+  },
+  {
+    "id": "FR-036",
+    "group": "Dữ liệu",
+    "title": "Lịch sử cá nhân và xuất phụ đề",
+    "detail": "Lưu video theo opt-in lịch sử; tìm lại bản dịch; xuất VI/song ngữ SRT/VTT với quyền nội dung; không xuất video lồng tiếng.",
+    "acceptance": "Timecode bản export là timeline nguồn, không phải lịch âm thanh đã auto-hold."
+  },
+  {
+    "id": "FR-037",
+    "group": "Dữ liệu",
+    "title": "Xóa dữ liệu và private mode",
+    "detail": "Xóa từng video/toàn bộ cache; private mode không ghi caption/audio/history xuống đĩa.",
+    "acceptance": "File audio đã mở đóng handle trước xóa; private mode không để payload trong log/crash report."
+  },
+  {
+    "id": "FR-038",
+    "group": "Vận hành",
+    "title": "Phục hồi worker/GPU",
+    "detail": "Health monitor, restart worker có giới hạn, OOM backoff, hạ batch/context theo preset; không restart loop.",
+    "acceptance": "Hai OOM liên tiếp dừng an toàn; không mất override; UI giải thích tình trạng GPU."
+  },
+  {
+    "id": "FR-039",
+    "group": "Vận hành",
+    "title": "Benchmark và diagnostic",
+    "detail": "Chạy A/B local, kết quả latency/output/token/error; xuất gói diagnostic redacted có opt-in.",
+    "acceptance": "Không gửi dữ liệu đi; chất lượng người chấm không bị thay bằng điểm tự chấm của model."
+  },
+  {
+    "id": "FR-040",
+    "group": "Vận hành",
+    "title": "Đóng gói/update/rollback",
+    "detail": "Companion Windows per-user, extension build, pinned artifacts, kiểm checksum update, rollback app và DB tương thích.",
+    "acceptance": "Cài trên tài khoản Windows sạch không cần cài Python toàn máy; gỡ cài đặt có chọn giữ/xóa model."
+  },
+  {
+    "id": "FR-041",
+    "group": "Bảo mật",
+    "title": "Xác thực loopback",
+    "detail": "Origin/Host validation, token ngắn hạn, không token URL, giới hạn frame/file/text; backend không làm proxy tùy ý.",
+    "acceptance": "Trang web thù địch/WS không auth bị chặn; endpoint không bind LAN."
+  },
+  {
+    "id": "FR-042",
+    "group": "Bảo mật",
+    "title": "Không thực thi từ nội dung",
+    "detail": "Caption được coi là dữ liệu, escape HTML, tools disabled, subprocess argv cố định, không eval.",
+    "acceptance": "Câu yêu cầu bỏ qua lệnh/chạy shell được dịch như nội dung, không được thực thi."
+  },
+  {
+    "id": "FR-043",
+    "group": "Bảo mật",
+    "title": "Offline AI và quyền tối thiểu",
+    "detail": "Không telemetry cloud mặc định; chỉ tải model có đồng ý; manifest chỉ host YouTube/loopback cần thiết.",
+    "acceptance": "Network audit tách YouTube browser traffic với AI worker egress; AI không gọi dịch vụ từ xa khi đang xem."
+  },
+  {
+    "id": "FR-044",
+    "group": "Bảo mật",
+    "title": "Thông báo giấy phép",
+    "detail": "About/Notices ghi nguồn code/model/voices, quy tắc quyền video; không quảng cáo liên kết chính thức YouTube/Google/VieNeu.",
+    "acceptance": "Bộ cài có SBOM/notices và checkbox hiểu phạm vi lưu/xuất nội dung."
+  },
+  {
+    "id": "FR-045",
+    "group": "Chất lượng",
+    "title": "Bàn giao có bằng chứng",
+    "detail": "Traceability FR→test, báo cáo acceptance, benchmark cả đơn và đồng thời TTS, lỗi còn mở.",
+    "acceptance": "Release bị chặn nếu có lỗi đảo nghĩa nghiêm trọng hoặc sai epoch/âm thanh vòng lặp."
+  }
+]

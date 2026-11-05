@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AudioChunkHeader",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "protocol_version": {
+      "const": 1
+    },
+    "kind": {
+      "enum": [
+        "asr_pcm",
+        "tts_pcm"
+      ]
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "timeline_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "segment_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 128
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sample_rate": {
+      "enum": [
+        16000,
+        48000
+      ]
+    },
+    "channels": {
+      "const": 1
+    },
+    "codec": {
+      "const": "pcm_s16le"
+    },
+    "sample_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "is_last": {
+      "type": "boolean"
+    },
+    "capture_monotonic_ms": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "source_media_ms": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    }
+  },
+  "required": [
+    "protocol_version",
+    "kind",
+    "session_id",
+    "timeline_epoch",
+    "segment_id",
+    "revision",
+    "seq",
+    "sample_rate",
+    "channels",
+    "codec",
+    "sample_count",
+    "is_last"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "code": "TRANSLATION_INVALID",
+  "message_vi": "Bản dịch câu này chưa đạt kiểm tra. Hãy thử dịch lại hoặc sửa câu.",
+  "retryable": true,
+  "request_id": "req-fixture-1",
+  "session_id": "fixture-session-1"
+}
