@@ -8,7 +8,7 @@ from typing import Any
 from ..paths import REPO_ROOT
 from .glossary import Glossary, Protected, protect
 
-PROMPT_VERSION = "translation-1.1-multilingual"
+PROMPT_VERSION = "translation-1.2-vietnamese-output"
 CONTEXT_TOKENS = 4096
 MAX_OUTPUT_TOKENS = 512
 SAFETY_TOKENS = 128
@@ -20,6 +20,17 @@ def _read(name: str) -> str:
 
 SYSTEM_PROMPT = _read("translation_system.vi.txt")
 REPAIR_PROMPT = _read("repair_system.vi.txt")
+LANGUAGE_NAMES = {"th": "Thai", "en": "English", "zh": "Chinese", "ja": "Japanese", "ko": "Korean",
+                  "fr": "French", "de": "German", "es": "Spanish", "pt": "Portuguese", "ru": "Russian",
+                  "id": "Indonesian", "ms": "Malay", "hi": "Hindi", "ar": "Arabic", "vi": "Vietnamese"}
+
+
+def system_prompt_for(source_language: str) -> str:
+    base = source_language.lower().split("-", 1)[0]
+    name = LANGUAGE_NAMES.get(base, "original language")
+    rule = ("Keep already-Vietnamese text in Vietnamese." if base == "vi" else
+            "target_text must be entirely in Vietnamese, not the original language, Chinese or English.")
+    return SYSTEM_PROMPT.replace("{{SOURCE}}", name).replace("{{TARGET_RULE}}", rule)
 
 
 def estimate_tokens(text: str) -> int:
@@ -76,7 +87,8 @@ def build_request(units: list[UnitInput], *, context_before: list[str], context_
         return json.dumps(body, ensure_ascii=False)
 
     user = compose()
-    budget = CONTEXT_TOKENS - max_output_tokens - SAFETY_TOKENS - estimate_tokens(SYSTEM_PROMPT)
+    system = system_prompt_for(source_language)
+    budget = CONTEXT_TOKENS - max_output_tokens - SAFETY_TOKENS - estimate_tokens(system)
     # Giảm context tham khảo trước; KHÔNG cắt văn bản cần dịch.
     while estimate_tokens(user) > budget and (cb or ca):
         if cb:
@@ -89,7 +101,7 @@ def build_request(units: list[UnitInput], *, context_before: list[str], context_
     ids = [u.segment_id for u in units]
     payload = {
         "model": model_alias,
-        "messages": [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": user}],
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
         "stream": False,
         "max_tokens": max_output_tokens,
         "response_format": {"type": "json_schema", "json_schema": {"name": "translations", "strict": True,
@@ -102,7 +114,7 @@ def build_request(units: list[UnitInput], *, context_before: list[str], context_
 def build_repair(original: BuiltRequest, bad_content: str, problems: list[str]) -> dict[str, Any]:
     p = dict(original.payload)
     note = json.dumps({"problems": problems[:10], "previous_output": (bad_content or "")[:4000]}, ensure_ascii=False)
-    p["messages"] = [{"role": "system", "content": SYSTEM_PROMPT + "\n\n" + REPAIR_PROMPT},
+    p["messages"] = [{"role": "system", "content": original.payload["messages"][0]["content"] + "\n\n" + REPAIR_PROMPT},
                      {"role": "user", "content": original.user_json},
                      {"role": "user", "content": note}]
     return p

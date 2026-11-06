@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -12,7 +13,18 @@ from .glossary import PLACEHOLDER_RE
 _REASONING = re.compile(r"</?think>|<\|[a-z_]+\|>|\bassistant\s*:|^\s*(?:Suy nghĩ|Reasoning)\s*:", re.I | re.M)
 _TOOLISH = re.compile(r'"(?:tool_calls|function_call|name)"\s*:')
 _VI_DIACRITIC = re.compile(r"[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]", re.I)
-_LATIN_WORD = re.compile(r"[A-Za-zÀ-ỹ]+")
+_LATIN_WORD = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ\u0100-\u024f\u1e00-\u1eff]+")
+
+
+def _has_foreign_script(text: str) -> bool:
+    """Detect clear non-Latin output without requiring Vietnamese diacritics.
+
+    Short Latin names, numbers and unaccented Vietnamese remain valid. Protected
+    literals are removed by the caller before this check.
+    """
+    letters = [c for c in unicodedata.normalize("NFC", text) if c.isalpha()]
+    foreign = sum(1 for c in letters if "LATIN" not in unicodedata.name(c, ""))
+    return foreign >= 2 or (foreign > 0 and foreign * 2 >= len(letters))
 
 
 @dataclass
@@ -101,14 +113,20 @@ def check_unit(sid: str, txt: str, exp: dict[str, Any]) -> UnitCheck:
             u.errors.append("UNKNOWN_PLACEHOLDER")
     if "VDTERM" in PLACEHOLDER_RE.sub("", t):
         u.errors.append("MANGLED_PLACEHOLDER")
-    # Cảnh báo (không chặn): ngôn ngữ và tỉ lệ độ dài.
+    # Untranslated Thai/CJK/etc cannot be sent to a Vietnamese TTS engine.
     src = exp.get("source", "")
     plain = PLACEHOLDER_RE.sub("", t)
+    for literal in mapping.values():
+        if literal:
+            plain = plain.replace(literal, "")
+    if _has_foreign_script(plain):
+        u.errors.append("WRONG_TARGET_SCRIPT")
     words = _LATIN_WORD.findall(plain)
     if len(words) >= 6 and not _VI_DIACRITIC.search(plain):
         u.warnings.append("LANG_SUSPECT")
     sw = max(1, len(src.split()))
     ratio = len(t.split()) / sw
-    if sw >= 4 and (ratio < 0.5 or ratio > 3.0):
+    # Whitespace is not a meaningful word boundary for Thai/CJK and similar scripts.
+    if sw >= 4 and not _has_foreign_script(PLACEHOLDER_RE.sub("", src)) and (ratio < 0.5 or ratio > 3.0):
         u.warnings.append(f"LENGTH_RATIO:{ratio:.2f}")
     return u

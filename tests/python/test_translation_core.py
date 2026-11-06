@@ -172,7 +172,69 @@ def test_thai_language_reaches_prompt_and_cache_is_separated():
     assert result.status == "READY"
     sent = json.loads(backend.calls[0]["messages"][1]["content"])
     assert sent["source_language"] == "th" and sent["segments"][0]["source_text"] == unit.source_text
+    assert "Thai source_text" in backend.calls[0]["messages"][0]["content"]
     assert result.cache_key != translation_cache_key(unit, topic="general", glossary_version=Glossary().version, fp=FP, source_language="en")
+
+
+def test_foreign_script_is_retranslated_then_never_cached_or_spoken_if_still_wrong():
+    thai = "สวัสดีครับ วันนี้อากาศดีมาก"
+    invalid = json.dumps({"translations": [{"segment_id": "u1", "target_text": thai}]}, ensure_ascii=False)
+    valid = json.dumps({"translations": [{"segment_id": "u1", "target_text": "Xin chào, hôm nay trời đẹp."}]}, ensure_ascii=False)
+    unit = _u("u1", thai)
+    backend = FakeBackend([invalid, valid])
+    [result] = asyncio.run(translate_batch(backend, [unit], topic="general", glossary=Glossary(), fp=FP, source_language="th"))
+    assert result.status == "READY" and result.target_display == "Xin chào, hôm nay trời đẹp."
+    assert "REPAIRED" in result.flags and len(backend.calls) == 2
+    assert "WRONG_TARGET_SCRIPT" in backend.calls[1]["messages"][-1]["content"]
+    bad = FakeBackend([invalid, invalid])
+    [blocked] = asyncio.run(translate_batch(bad, [unit], topic="general", glossary=Glossary(), fp=FP, source_language="th"))
+    assert blocked.status == "BLOCKED" and blocked.target_spoken == "" and "WRONG_TARGET_SCRIPT" in blocked.flags
+
+
+@pytest.mark.parametrize("source,target,ok", [
+    ("สวัสดีครับ", "สวัสดีครับ", False),
+    ("สวัสดีครับ", "Chào大家", False),
+    ("สวัสดีครับ", "Xin chào mọi người", True),
+    ("hello", "Xin chao ban", True),
+    ("hello", "AI 2026", True),
+])
+def test_wrong_language_detection_handles_vietnamese_and_latin_names(source, target, ok):
+    raw = json.dumps({"translations": [{"segment_id": "u1", "target_text": target}]}, ensure_ascii=False)
+    assert parse_and_check(raw, "stop", {"u1": {"source": source, "counts": {}, "mapping": {}}}).ok is ok
+
+
+def test_foreign_protected_names_are_not_rejected():
+    exp = {"u1": {"source": "hello VDTERM_0001", "counts": {"VDTERM_0001": 1}, "mapping": {"VDTERM_0001": "東京"}}}
+    for target in ("Xin chào VDTERM_0001", "Xin chào 東京"):
+        raw = json.dumps({"translations": [{"segment_id": "u1", "target_text": target}]}, ensure_ascii=False)
+        assert parse_and_check(raw, "stop", exp).ok
+
+
+def test_thai_word_spacing_does_not_trigger_false_length_warning():
+    source = "สวัสดีครับ วันนี้อากาศดีมาก ขอให้ทุกคนมีความสุข ขอบคุณครับ"
+    target = "Xin chào các bạn, hôm nay thời tiết rất đẹp, chúc mọi người vui vẻ và xin cảm ơn."
+    raw = json.dumps({"translations": [{"segment_id": "u1", "target_text": target}]}, ensure_ascii=False)
+    result = parse_and_check(raw, "stop", {"u1": {"source": source, "counts": {}, "mapping": {}}})
+    assert result.ok and not any(x.startswith("LENGTH_RATIO") for x in result.units["u1"].warnings)
+
+
+def test_old_cached_thai_output_is_not_reused(monkeypatch):
+    import vietdub.translation.service as service
+    thai = "สวัสดีครับ วันนี้อากาศดีมาก"
+    unit = _u("u1", thai)
+    monkeypatch.setattr(service, "PROMPT_VERSION", "translation-1.1-multilingual")
+    old_key = translation_cache_key(unit, topic="general", glossary_version=1, fp=FP, source_language="th")
+    monkeypatch.undo()
+
+    class OldCache:
+        def get(self, key):
+            return {"status": "READY", "target_display": thai, "target_spoken": thai} if key == old_key else None
+
+    backend = FakeBackend(['{"translations":[{"segment_id":"u1","target_text":"Xin chào."}]}'])
+    [result] = asyncio.run(translate_batch(backend, [unit], topic="general", glossary=Glossary(), fp=FP,
+                                            source_language="th", cache=OldCache()))
+    assert result.status == "READY" and result.target_display == "Xin chào."
+    assert not result.from_cache and result.cache_key != old_key and len(backend.calls) == 1
 
 
 def test_cjk_sentence_boundaries_keep_text_and_timestamps():

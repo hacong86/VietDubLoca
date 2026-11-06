@@ -22,7 +22,7 @@
     "max_source_words_per_unit": 60,
     "max_unit_ms": 12000,
     "repair_attempts": 1,
-    "prompt_version": "translation-1.0"
+    "prompt_version": "translation-1.2-vietnamese-output"
   },
   "tts": {
     "provider": "vieneu_sdk_local",

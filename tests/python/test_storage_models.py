@@ -105,6 +105,14 @@ def _mk_translation(db):
                                "target_spoken": "d", "flags": [], "status": "READY"})
 
 
+def test_restore_machine_translation_respects_prompt_version(tmp_path):
+    db = Database(tmp_path / "d.sqlite3", tmp_path)
+    _mk_translation(db)
+    assert db.latest_machine_translation("u1", "p")["target_display"] == "d"
+    assert db.latest_machine_translation("u1", "new-prompt") is None
+    db.close()
+
+
 def test_audio_cache_atomic_lru_ttl_lease(tmp_path):
     db = Database(tmp_path / "d.sqlite3", tmp_path)
     tid = _mk_translation(db)

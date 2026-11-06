@@ -6,7 +6,7 @@ VietDub dịch phụ đề YouTube sang tiếng Việt và đọc bằng giọng
 
 Tải tệp cập nhật nhỏ một lần; tệp này tự tải và giải nén bản mới. Các mô hình đã tải được giữ lại nếu bạn chọn **đúng thư mục đã cài trước đó**.
 
-1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.3-preview), tìm mục **Assets**, tải **Cap-nhat-tu-0.1.1.cmd**.
+1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.4-preview), tìm mục **Assets**, tải **Cap-nhat-tu-0.1.1.cmd**.
 2. Nhấp đúp tệp vừa tải. Chọn đúng thư mục cài cũ rồi bấm **OK**. Ví dụ nếu lần trước chọn `J:\J2TEAM\setting`, hãy chọn lại chính thư mục này.
 3. Chọn **Yes / Có** để tải bản mới. Khi cửa sổ cài đặt hiện ra, bấm **Cài đặt** và chờ thông báo hoàn tất. Bộ cài dùng lại các thành phần còn phù hợp; chỉ tải phần còn thiếu hoặc thay đổi.
 4. Mở Chrome, gõ `chrome://extensions` vào thanh địa chỉ, tìm VietDub Local và bấm nút **Tải lại** hình mũi tên tròn.
@@ -15,8 +15,8 @@ Tải tệp cập nhật nhỏ một lần; tệp này tự tải và giải né
 
 ### 1. Tải bộ cài
 
-1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.3-preview).
-2. Cuộn xuống mục **Assets**. Bấm **VietDubLocal-0.1.3-win-x64.zip** để tải. Không chọn mục **Source code**.
+1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.4-preview).
+2. Cuộn xuống mục **Assets**. Bấm **VietDubLocal-0.1.4-win-x64.zip** để tải. Không chọn mục **Source code**.
 
 ### 2. Giải nén và cài
 
@@ -44,6 +44,8 @@ Lần đầu có thể mất nhiều thời gian vì phải tải vài GB. Nếu
 3. Mở video YouTube có phụ đề, chẳng hạn phụ đề tiếng Thái hoặc tiếng Anh. Trong tab **Xem**, bấm **Bật tiếng Việt** và chờ chuẩn bị giọng đọc. Ứng dụng chọn một phụ đề có sẵn; tên ngôn ngữ được hiển thị ở mục nguồn.
 
 ## Cập nhật những lần sau
+
+Nếu đang dùng 0.1.3 và gặp bản dịch vẫn là tiếng Thái, hãy cập nhật theo các bước sau rồi tắt/bật lại thuyết minh trên video để dịch lại. Model đã tải được giữ nguyên.
 
 1. Mở thư mục nơi bạn đã cài VietDub, nhấp đúp **Cap-nhat-VietDub.cmd**.
 2. Nếu có bản mới, chọn **Yes / Có**, chờ tải và cửa sổ cài đặt xuất hiện. Thư mục cài cũ đã được điền sẵn; bấm **Cài đặt** và chờ hoàn tất.

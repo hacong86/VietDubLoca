@@ -6,7 +6,7 @@ import { T } from '../shared/strings';
 import { Card, Confirm, ErrorBox, downloadText, sendBg, useInterval } from './ui';
 
 const FLAG_VI: Record<string, string> = {
-  USER_OVERRIDE: 'Do bạn sửa', REPAIRED: 'Đã sửa định dạng 1 lần', LANG_SUSPECT: 'Nghi sai ngôn ngữ', EMPTY: 'Rỗng',
+  USER_OVERRIDE: 'Do bạn sửa', REPAIRED: 'Đã thử dịch lại', LANG_SUSPECT: 'Nghi sai ngôn ngữ', WRONG_TARGET_SCRIPT: 'Bản dịch chưa phải tiếng Việt — bấm Sửa rồi Dịch lại', EMPTY: 'Rỗng',
   TRUNCATED: 'Bị cắt ngắn', MISSING_ID: 'Thiếu câu', JSON_INVALID: 'Sai định dạng',
 };
 const flagVi = (f: string) => FLAG_VI[f] ?? (f.startsWith('LENGTH_RATIO') ? 'Độ dài bất thường' : f.startsWith('PLACEHOLDER') ? 'Mất tên/mã được bảo vệ' : f);
@@ -91,7 +91,7 @@ export function TranscriptTab({ status, tabId }: { status: PanelStatus | null; t
                 <button className="btn small" onClick={() => setEdit(x)} aria-label="Sửa bản dịch câu này">Sửa</button>
               </span>
             </div>
-            <div className="en" lang="en">{x.source_text}</div>
+            <div className="en">{x.source_text}</div>
             <div className="vi" lang="vi">{x.status === 'blocked' ? `${T.blocked}.` : x.status === 'pending' || x.status === 'translating' ? '…' : x.target_display}</div>
             {(x.flags.length > 0 || x.audio === 'failed') && (
               <div className="flags"><span className="badge warn">{[...x.flags.map(flagVi), ...(x.audio === 'failed' ? ['Chưa tạo được giọng'] : [])].join(' · ')}</span></div>
@@ -134,7 +134,7 @@ function EditModal({ seg, onClose }: { seg: Segment; onClose: () => void }) {
     <div className="modal-bg" role="dialog" aria-modal="true" aria-label="Sửa bản dịch">
       <div className="modal stack">
         <h2 style={{ margin: 0, fontSize: 16 }}>Sửa bản dịch — {fmtTime(seg.start_ms)}</h2>
-        <label className="field"><span>Câu gốc (chỉ đọc)</span><textarea readOnly value={seg.source_text} lang="en" /></label>
+        <label className="field"><span>Câu gốc (chỉ đọc)</span><textarea readOnly value={seg.source_text} /></label>
         <label className="field"><span>Chữ hiển thị (phụ đề, giữ nguyên tên nút/code)</span><textarea value={display} onChange={(e) => setDisplay(e.target.value)} lang="vi" /></label>
         <label className="field"><span>Cách đọc (chỉ đổi giọng đọc, không đổi phụ đề)</span><textarea value={spoken} onChange={(e) => setSpoken(e.target.value)} lang="vi" /></label>
         <ErrorBox error={err} />

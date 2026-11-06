@@ -55,12 +55,13 @@ def start(client, token):
 
 def test_thai_caption_reaches_translation_and_audio(client, token, ctx):
     import json
+    from vietdub.translation.llm import LlmResult
     seen = []
-    original = ctx.rt.chat
 
     async def record(payload):
         seen.append(json.loads(payload["messages"][1]["content"]))
-        return await original(payload)
+        sid = seen[-1]["segments"][0]["segment_id"]
+        return LlmResult(json.dumps({"translations": [{"segment_id": sid, "target_text": "Xin chào."}]}), "stop", False, None, 1.0)
 
     ctx.rt.chat = record
     sid = start(client, token)

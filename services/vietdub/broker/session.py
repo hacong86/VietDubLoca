@@ -20,6 +20,7 @@ from ..hashing import content_key, sha256_hex
 from ..storage.audio_cache import AudioCache
 from ..storage.db import Database
 from ..translation.glossary import Glossary
+from ..translation.prompt import PROMPT_VERSION
 from ..translation.segmenter import TranslationUnit, build_units
 from ..translation.service import (ModelFingerprint, UnitRequest, UnitResult, audio_cache_key, plan_batches,
                                    translate_batch)
@@ -536,7 +537,7 @@ class Session:
             us.status, us.error = "blocked", r.error_code
         us.translation_id = self.db.put_translation({
             "segment_id": us.unit.unit_id, "revision": us.revision, "cache_key": r.cache_key,
-            "model_fingerprint": fp.value(), "prompt_version": "translation-1.0", "glossary_version": self.glossary.version,
+            "model_fingerprint": fp.value(), "prompt_version": PROMPT_VERSION, "glossary_version": self.glossary.version,
             "context_hash": r.context_hash, "target_display": r.target_display or "", "target_spoken": r.target_spoken or "",
             "flags": r.flags, "status": "READY" if r.status == "READY" else "BLOCKED"})
 
@@ -703,7 +704,7 @@ class Session:
         else:
             us.override = False
             machine = self.db.get_translation_by_key(us.cache_key) if us.cache_key else None
-            machine = machine or self.db.latest_machine_translation(segment_id)   # bản sửa nạp lại từ DB: chưa có cache_key
+            machine = machine or self.db.latest_machine_translation(segment_id, PROMPT_VERSION)  # tránh dùng bản dịch cũ sai ngôn ngữ
             if machine and machine["status"] == "READY":
                 us.status, us.display, us.spoken, us.flags, us.error = \
                     "ready", machine["target_display"], machine["target_spoken"], list(machine["flags"]), None

@@ -4,5 +4,5 @@ Workers (``vietdub.workers``) chạy bằng interpreter khác (venv TTS/ASR) nê
 thư viện chuẩn + ``vietdub.workers.ipc``; không import module broker từ worker.
 """
 
-APP_VERSION = "0.1.3"
+APP_VERSION = "0.1.4"
 PROTOCOL_VERSION = 1

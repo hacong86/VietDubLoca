@@ -2,14 +2,15 @@
 
 Dịch phụ đề YouTube sang tiếng Việt và đọc thuyết minh bằng AI chạy trên máy Windows. Không cần API key. Internet cần cho YouTube và tải thành phần ban đầu.
 
-**0.1.3 preview — bản dùng thử**, chưa phát hành Chrome Web Store và chưa được xác nhận trên Windows sạch/mọi GPU. Mã nguồn được chia sẻ theo **[PolyForm Noncommercial 1.0.0](LICENSE)**; sử dụng phi thương mại theo các điều khoản của giấy phép. Thành phần bên thứ ba giữ giấy phép riêng, xem [NOTICE](NOTICE) và [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+**0.1.4 preview — bản dùng thử**, chưa phát hành Chrome Web Store và chưa được xác nhận trên Windows sạch/mọi GPU. Mã nguồn được chia sẻ theo **[PolyForm Noncommercial 1.0.0](LICENSE)**; sử dụng phi thương mại theo các điều khoản của giấy phép. Thành phần bên thứ ba giữ giấy phép riêng, xem [NOTICE](NOTICE) và [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-**[Tải bộ cài Windows](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.3-preview)** · **[Hướng dẫn cài mới hoàn toàn bằng tiếng Việt](docs/CAI_MOI_TU_GITHUB.md)**
+**[Tải bộ cài Windows](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.4-preview)** · **[Hướng dẫn cài mới hoàn toàn bằng tiếng Việt](docs/CAI_MOI_TU_GITHUB.md)**
 
-Tại trang Release, mở **Assets**, tải `VietDubLocal-0.1.3-win-x64.zip` và `SHA256SUMS.txt`. Không chọn **Source code (zip)** để cài ứng dụng: đó là mã nguồn dành cho người phát triển. ZIP khoảng 19 MB; khi cài còn tải vài GB thư viện và khoảng 3,55 GB model cơ bản.
+Tại trang Release, mở **Assets**, tải `VietDubLocal-0.1.4-win-x64.zip` và `SHA256SUMS.txt`. Không chọn **Source code (zip)** để cài ứng dụng: đó là mã nguồn dành cho người phát triển. ZIP khoảng 19 MB; khi cài còn tải vài GB thư viện và khoảng 3,55 GB model cơ bản.
 
-## Điểm mới 0.1.3
+## Điểm mới 0.1.4
 
+- Sửa trường hợp Qwen trả lại tiếng Thái hoặc tiếng Trung thay vì bản dịch tiếng Việt. Ứng dụng thử dịch lại; nếu vẫn sai, câu đó được báo lỗi để người dùng sửa hoặc bấm dịch lại. Bản dịch sai của phiên bản cũ không được tự dùng lại.
 - Hiện bước cài, công việc hiện tại, thư viện đang tải, thời gian chạy và log trực tiếp. Tệp runtime có số byte/tổng và phần trăm; khi chưa biết tổng, thanh chạy chỉ biểu thị đang xử lý.
 - Sửa báo thất bại dù bộ cài đã hoàn tất do mã thoát rỗng trên PowerShell 5.1.
 - Ô đồng ý tải được tích sẵn; có thể bỏ tích. Chỉ tải khi bấm **Cài đặt**.

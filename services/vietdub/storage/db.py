@@ -259,10 +259,10 @@ class Database:
                                  (segment_id,)).fetchone()
         return dict(r) if r else None
 
-    def latest_machine_translation(self, segment_id: str) -> dict[str, Any] | None:
+    def latest_machine_translation(self, segment_id: str, prompt_version: str) -> dict[str, Any] | None:
         """Bản máy dịch READY mới nhất của câu (dùng khi hoàn tác bản sửa nạp lại từ DB, chưa có cache_key)."""
-        r = self.content.execute("SELECT * FROM translations WHERE segment_id=? AND status='READY' "
-                                 "ORDER BY created_at DESC LIMIT 1", (segment_id,)).fetchone()
+        r = self.content.execute("SELECT * FROM translations WHERE segment_id=? AND status='READY' AND prompt_version=? "
+                                 "ORDER BY created_at DESC LIMIT 1", (segment_id, prompt_version)).fetchone()
         if not r:
             return None
         d = dict(r)
