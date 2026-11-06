@@ -13,6 +13,7 @@ import json
 import shutil
 import sys
 import zipfile
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -77,6 +78,28 @@ def zipdir(src: Path, dst: Path) -> None:
                 z.write(p, Path(src.name) / p.relative_to(src))
 
 
+def write_update_bootstrap(dst: Path) -> None:
+    """Single downloadable file for users whose 0.1.1 install has no updater yet."""
+    updater = (ROOT / "packaging/windows/update.ps1").read_text(encoding="utf-8-sig")
+    source = """Add-Type -AssemblyName System.Windows.Forms
+$dialog=New-Object Windows.Forms.FolderBrowserDialog
+$dialog.Description='Chọn thư mục đã cài VietDub Local, nơi chứa thư mục app'
+if ($dialog.ShowDialog() -ne 'OK') { exit 0 }
+$homeDir=$dialog.SelectedPath
+$dialog.Dispose()
+& {
+""" + updater + "\n} -HomeDir $homeDir\n"
+    compressor = zlib.compressobj(level=9, wbits=-15)
+    packed = base64.b64encode(compressor.compress(source.encode("utf-8")) + compressor.flush()).decode("ascii")
+    cmd = ("@echo off\r\nsetlocal\r\npowershell.exe -NoProfile -STA -ExecutionPolicy Bypass -Command "
+           '"$b=[Convert]::FromBase64String(\'' + packed + "');"
+           "$m=New-Object IO.MemoryStream(,$b);$d=New-Object IO.Compression.DeflateStream($m,[IO.Compression.CompressionMode]::Decompress);"
+           "$r=New-Object IO.StreamReader($d,[Text.Encoding]::UTF8);& ([scriptblock]::Create($r.ReadToEnd()))" + '"\r\n')
+    if max(map(len, cmd.splitlines())) >= 8191:
+        raise ValueError("Update bootstrap exceeds Windows command line limit")
+    dst.write_text(cmd, encoding="ascii", newline="")
+
+
 def main() -> int:
     sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
     ap = argparse.ArgumentParser()
@@ -117,13 +140,14 @@ def main() -> int:
     (app / "bin").mkdir(parents=True)
     shutil.copy2(a.uv, app / "bin/uv.exe")
     copytree(ext_dist, pkg / "extension")
-    for f in ("Setup.cmd", "setup.ps1", "install.ps1", "install-common.ps1", "uninstall.ps1", "HUONG-DAN.html"):
+    for f in ("Setup.cmd", "setup.ps1", "install.ps1", "install-common.ps1", "uninstall.ps1", "HUONG-DAN.html", "Cap-nhat-VietDub.cmd", "update.ps1"):
         shutil.copy2(ROOT / "packaging/windows" / f, pkg / f)
     shutil.copy2(ROOT / "packaging/windows/README-CAI-DAT.txt", pkg / "README-CAI-DAT.txt")
     shutil.copy2(ROOT / "THIRD_PARTY_NOTICES.md", pkg / "THIRD_PARTY_NOTICES.md")
     for name in ("LICENSE", "NOTICE"):
         shutil.copy2(ROOT / name, pkg / name)
     shutil.copy2(ROOT / "docs/CAI_MOI_TU_GITHUB.md", pkg / "CAI-MOI-TU-GITHUB.md")
+    copytree(ROOT / "docs/images", pkg / "images")
     man = write_manifest(pkg, a.version, ext_ids)
     z_app = out / f"{pkg.name}.zip"
     zipdir(pkg, z_app)
@@ -132,8 +156,10 @@ def main() -> int:
     shutil.copytree(ext_dist, ext_stage)
     z_ext = out / f"{ext_stage.name}.zip"
     zipdir(ext_stage, z_ext)
+    bootstrap = out / "Cap-nhat-tu-0.1.1.cmd"
+    write_update_bootstrap(bootstrap)
     remove_build_dir(ext_stage, out)
-    sums = "".join(f"{sha256(z)}  {z.name}\n" for z in (z_app, z_ext))
+    sums = "".join(f"{sha256(z)}  {z.name}\n" for z in (z_app, z_ext, bootstrap))
     (out / "SHA256SUMS.txt").write_text(sums, encoding="utf-8")
     print(f"package {pkg} files={len(man['files'])}")
     print(sums, end="")

@@ -60,9 +60,9 @@ def context_hash(before: list[str], after: list[str]) -> str:
     return content_key({"b": before, "a": after})
 
 
-def translation_cache_key(u: UnitRequest, *, topic: str, glossary_version: int, fp: ModelFingerprint) -> str:
+def translation_cache_key(u: UnitRequest, *, topic: str, glossary_version: int, fp: ModelFingerprint, source_language: str = "en") -> str:
     return content_key({"src": u.source_text, "src_hash": u.source_hash,
-                        "ctx": context_hash(u.context_before, u.context_after), "sl": "en", "tl": "vi",
+                        "ctx": context_hash(u.context_before, u.context_after), "sl": source_language.lower(), "tl": "vi",
                         "topic": topic, "glossary_version": glossary_version, "prompt": PROMPT_VERSION,
                         "model": fp.value(), "norm": NORMALIZER_VERSION})
 
@@ -93,11 +93,11 @@ def plan_batches(units: list[UnitRequest]) -> list[list[UnitRequest]]:
 
 async def translate_batch(backend: ChatBackend, units: list[UnitRequest], *, topic: str, glossary: Glossary,
                           fp: ModelFingerprint, cache: TranslationCache | None = None,
-                          max_repairs: int = 1) -> list[UnitResult]:
+                          max_repairs: int = 1, source_language: str = "en") -> list[UnitResult]:
     results: dict[str, UnitResult] = {}
     todo: list[UnitRequest] = []
     for u in units:
-        key = translation_cache_key(u, topic=topic, glossary_version=glossary.version, fp=fp)
+        key = translation_cache_key(u, topic=topic, glossary_version=glossary.version, fp=fp, source_language=source_language)
         hit = cache.get(key) if cache else None
         if hit and hit.get("status") in ("READY",):
             results[u.segment_id] = UnitResult(u.segment_id, "READY", hit["target_display"], hit["target_spoken"],
@@ -109,7 +109,7 @@ async def translate_batch(backend: ChatBackend, units: list[UnitRequest], *, top
         # Context chung của nhóm: trước unit đầu, sau unit cuối.
         req = build_request([UnitInput(u.segment_id, u.source_text) for u in todo],
                             context_before=todo[0].context_before, context_after=todo[-1].context_after,
-                            topic=topic, glossary=glossary, model_alias=fp.alias, sampling=fp.sampling)
+                            topic=topic, glossary=glossary, model_alias=fp.alias, sampling=fp.sampling, source_language=source_language)
         expected = {sid: {"source": p.text, "counts": p.expected_counts, "mapping": p.mapping}
                     for sid, p in req.protected.items()}
         fatal_kinds = ("TRUNCATED", "REASONING_PRESENT", "REASONING_TAG", "JSON_INVALID", "SCHEMA_TOP",
@@ -134,7 +134,7 @@ async def translate_batch(backend: ChatBackend, units: list[UnitRequest], *, top
             repaired = True
         pron = pronunciations_from(glossary, topic)
         for u in todo:
-            key = translation_cache_key(u, topic=topic, glossary_version=glossary.version, fp=fp)
+            key = translation_cache_key(u, topic=topic, glossary_version=glossary.version, fp=fp, source_language=source_language)
             ch = context_hash(u.context_before, u.context_after)
             uc, batch_fatal = best.get(u.segment_id, (None, []))
             if uc is None or uc.errors or batch_fatal:

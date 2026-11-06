@@ -90,7 +90,7 @@ export function GlossaryTab() {
       {edit && (
         <div className="modal-bg" role="dialog" aria-modal="true" aria-label="Sửa thuật ngữ">
           <div className="modal stack">
-            <label className="field"><span>Cụm từ tiếng Anh</span><input type="text" value={edit.e.source} onChange={(x) => setEdit({ ...edit, e: { ...edit.e, source: x.target.value } })} /></label>
+            <label className="field"><span>Cụm từ gốc</span><input type="text" value={edit.e.source} onChange={(x) => setEdit({ ...edit, e: { ...edit.e, source: x.target.value } })} /></label>
             <div className="row">
               <label className="field" style={{ flex: 1 }}><span>Lĩnh vực</span>
                 <select value={edit.e.domain} onChange={(x) => setEdit({ ...edit, e: { ...edit.e, domain: x.target.value } })}>{DOMAINS.map((d) => <option key={d}>{d}</option>)}</select></label>

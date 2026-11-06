@@ -80,7 +80,7 @@ export function WatchTab({ status, info, refreshInfo, settings, saveSettings }: 
     const cues = importRes.cues.map((c, i) => ({ cue_id: `i${i + 1}`, start_ms: c.startMs, end_ms: c.endMs, text: c.text, committed: true }));
     const last = cues.reduce((m, c) => Math.max(m, c.end_ms), 0);
     const r = await sendBg<{ ok: boolean; code?: string }>({ type: 'panel.import_captions', tab_id: info?.tab_id, payload: {
-      source_id: `import-${Date.now()}`, source_kind: 'import', language: 'en', coverage: 'full', available_until_ms: last, cues,
+      source_id: `import-${Date.now()}`, source_kind: 'import', language: 'und', coverage: 'full', available_until_ms: last, cues,
       offset_ms: Math.round(offsetS * 1000), label: `Tệp nhập: ${importRes.name}`, tried: [] } });
     setImportRes(null);
     return r;

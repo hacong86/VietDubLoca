@@ -28,7 +28,7 @@ def package(tmp_path):
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     key = json.loads((ROOT / 'config/extension-public-key.json').read_text())['key']
-    required = ['install.ps1','install-common.ps1','uninstall.ps1','Setup.cmd','setup.ps1','HUONG-DAN.html',
+    required = ['install.ps1','install-common.ps1','uninstall.ps1','Setup.cmd','setup.ps1','HUONG-DAN.html','Cap-nhat-VietDub.cmd','update.ps1',
                 'LICENSE','NOTICE','app/LICENSE','app/NOTICE','extension/LICENSE','extension/NOTICE',
                 'app/bin/uv.exe','app/requirements/broker.lock.txt','app/requirements/tts.lock.txt',
                 'app/requirements/asr.lock.txt','extension/manifest.json']

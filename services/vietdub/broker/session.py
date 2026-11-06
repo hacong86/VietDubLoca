@@ -229,7 +229,8 @@ class Session:
     async def add_captions(self, batch: dict[str, Any], offset_ms: int = 0) -> int:
         """Nhận CaptionBatch đã validate schema. Đổi source_id/revision → epoch mới (timeline đổi)."""
         src_changed = (self.source is None or batch["source_id"] != self.source["source_id"]
-                       or batch["source_revision"] != self.source["source_revision"] or offset_ms != self.source["offset_ms"])
+                       or batch["source_revision"] != self.source["source_revision"] or offset_ms != self.source["offset_ms"]
+                       or batch["language"] != self.source["language"])
         if src_changed and self.source is not None:
             await self.bump_epoch("source_changed")
             self.cues.clear()
@@ -493,16 +494,17 @@ class Session:
         for s in states:
             s.status = "translating"
         t0 = time.perf_counter()
+        source_epoch = self.epoch
         try:
             results = await translate_batch(self.rt, batch, topic=self.settings.topic, glossary=self.glossary, fp=fp,
-                                            cache=_DbCache(self.db))
+                                            cache=_DbCache(self.db), source_language=self.source["language"] if self.source else "und")
         except BaseException:
             for s in states:
                 if s.status == "translating":
                     s.status = "pending"
             raise
         self.metrics["translate_ms"].append(round((time.perf_counter() - t0) * 1000, 1))
-        if self.closed:
+        if self.closed or self.epoch != source_epoch:
             return
         for r in results:
             us = self.by_id.get(r.segment_id)
@@ -729,7 +731,11 @@ class Session:
         # bỏ qua cache để dịch lại thật; sampling khác seed để có phương án mới
         fp2 = ModelFingerprint(fp.model_id, fp.alias, fp.artifact_sha256, fp.runtime_build,
                                {**fp.sampling, "seed": int(time.time()) % 100000})
-        [r] = await translate_batch(self.rt, [req], topic=self.settings.topic, glossary=self.glossary, fp=fp2, cache=None)
+        source_epoch = self.epoch
+        [r] = await translate_batch(self.rt, [req], topic=self.settings.topic, glossary=self.glossary, fp=fp2, cache=None,
+                                    source_language=self.source["language"] if self.source else "und")
+        if self.closed or self.epoch != source_epoch:
+            return
         us.override = False
         us.revision += 1
         self._store_result(us, r, fp2)

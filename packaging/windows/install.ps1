@@ -11,8 +11,14 @@ $ErrorActionPreference='Stop'
 [Console]::OutputEncoding=[Text.Encoding]::UTF8
 $Pkg=$PSScriptRoot
 . (Join-Path $Pkg 'install-common.ps1')
-function Say($m) { Write-Host "[VietDub] $m" }
-function Run([string]$Exe,[string[]]$Arguments,[string]$Step) { InvokeNativeChecked $Exe $Arguments $InstallLog $Step }
+function Say($m) {
+ Write-Output "[VietDub] $m"
+ if ($script:InstallProgress) {
+  if ($m -match '^(\d)/7\s+(.+)') { $script:InstallProgress.step=[int]$matches[1]; SetInstallActivity $matches[2] }
+  if ($script:InstallLiveLog) { Add-Content -Encoding UTF8 -LiteralPath $script:InstallLiveLog -Value "[VietDub] $m" }
+ }
+}
+function Run([string]$Exe,[string[]]$Arguments,[string]$Step,[string]$DownloadPath='',[long]$TotalBytes=0) { InvokeNativeChecked $Exe $Arguments $InstallLog $Step $DownloadPath $TotalBytes }
 function SetPointer([string]$Name) {
  WriteText "$CurFile.tmp" $Name
  if (Test-Path -LiteralPath $CurFile) { [IO.File]::Replace("$CurFile.tmp",$CurFile,[NullString]::Value) }
@@ -48,6 +54,7 @@ try {
  foreach ($rel in @('app','runtime','models','cache\uv','tmp','logs')) { New-Item -ItemType Directory -Force -Path (ChildPath $HomeDir $rel) | Out-Null }
  WriteText (Join-Path $HomeDir '.vietdub-install.json') '{"product":"VietDub Local"}'
  $InstallLog=ChildPath $HomeDir 'logs\install.log'
+ StartInstallProgress (ChildPath $HomeDir 'logs\install-progress.json') (ChildPath $HomeDir 'logs\install-live.log')
  Add-Content -Encoding UTF8 -LiteralPath $InstallLog "$(Get-Date -Format s) install $($manifest.version)"
  $env:UV_CACHE_DIR=ChildPath $HomeDir 'cache\uv'; $env:UV_PYTHON_INSTALL_DIR=ChildPath $HomeDir 'runtime\python'
  $env:UV_NO_MODIFY_PATH='1'; $env:UV_PYTHON_INSTALL_BIN='0'; $env:UV_PYTHON_INSTALL_REGISTRY='0'
@@ -85,10 +92,12 @@ try {
     if ($LlamaZipDir -and (Test-Path -LiteralPath (Join-Path $LlamaZipDir $z.name))) { Copy-Item -LiteralPath (Join-Path $LlamaZipDir $z.name) -Destination $dst -Force }
     if ((Test-Path -LiteralPath $dst) -and (Sha $dst) -ne $z.sha256) { Remove-Item -LiteralPath $dst -Force }
     if (-not (Test-Path -LiteralPath $dst)) {
-     Run 'curl.exe' @('-fSL','--retry','3','-C','-','-o',"$dst.part",$z.url) "Tải $($z.name) (có thể tiếp tục khi mất mạng)"
+     Run 'curl.exe' @('-fSL','--retry','3','-C','-','-o',"$dst.part",$z.url) "Tải $($z.name)" "$dst.part" ([long]$z.size)
+     SetInstallActivity "Kiểm checksum $($z.name)"
      if ((Sha "$dst.part") -ne $z.sha256) { Remove-Item -LiteralPath "$dst.part" -Force; throw 'Checksum runtime sai. Chạy lại để tải mới.' }
      Move-Item -LiteralPath "$dst.part" -Destination $dst -Force
     }
+    SetInstallActivity "Giải nén $($z.name)"
     Expand-Archive -LiteralPath $dst -DestinationPath $llamaDir -Force
    }
   }
@@ -111,7 +120,8 @@ try {
    $python=Join-Path $venv 'Scripts\python.exe'; $complete=Join-Path $venv 'vietdub-ready.txt'
    if (-not (Test-Path -LiteralPath $python)) { Run $uv @('venv',$venv,'--python',$py) "Tạo môi trường $kind" }
    if (-not (Test-Path -LiteralPath $complete) -or ([IO.File]::ReadAllText($complete)).Trim() -ne $fingerprint) {
-    Run $uv @('pip','sync','--python',$python,$lock,'--extra-index-url','https://download.pytorch.org/whl/cu128','--index-strategy','unsafe-best-match') "Tải thư viện $kind (lần đầu có thể vài GB)"
+    $label=if ($kind -eq 'tts') { 'giọng đọc VieNeu / PyTorch' } else { 'nhận dạng âm thanh Whisper' }
+    Run $uv @('pip','sync','--python',$python,$lock,'--extra-index-url','https://download.pytorch.org/whl/cu128','--index-strategy','unsafe-best-match') "Tải/cài thư viện $label"
     Run $uv @('pip','check','--python',$python) "Kiểm thư viện $kind"
     $imports=if ($kind -eq 'tts') { 'import vieneu, torch, numpy' } else { 'import faster_whisper, numpy' }
     Run $python @('-B','-c',$imports) "Kiểm khởi động môi trường $kind"
@@ -163,6 +173,7 @@ set PYTHONIOENCODING=utf-8
   }
  }
  foreach ($file in @('uninstall.ps1','install-common.ps1')) { Copy-Item -LiteralPath (Join-Path $Pkg $file) -Destination (Join-Path $AppRoot $file) -Force }
+ foreach ($file in @('Cap-nhat-VietDub.cmd','update.ps1')) { Copy-Item -LiteralPath (Join-Path $Pkg $file) -Destination (Join-Path $HomeDir $file) -Force }
  WriteText (Join-Path $AppRoot 'install-marker.json') '{"product":"VietDub Local"}'
  if ($Prev) { WriteText (Join-Path $AppRoot 'previous.txt') $Prev }
  $guide=[IO.File]::ReadAllText((Join-Path $Pkg 'HUONG-DAN.html')).Replace('{{EXTENSION_PATH}}',[Net.WebUtility]::HtmlEncode($ext))
@@ -178,6 +189,7 @@ set PYTHONIOENCODING=utf-8
  $switched=$false
  Say "7/7 INSTALL_OK $($manifest.version)"; Say "Nạp tiện ích tại: $ext"
  Say 'Mở hướng dẫn, nạp tiện ích, bấm Kết nối rồi Chuẩn bị để sử dụng.'
+ $script:InstallProgress.state='done'; $script:InstallProgress.activity='Cài đặt hoàn tất'; SaveInstallProgress
  exit 0
 } catch {
  $failure=$_.Exception.Message
@@ -194,6 +206,7 @@ set PYTHONIOENCODING=utf-8
    Say 'Đã trả về phiên bản trước (nếu có).'
   } catch { Say "Không khôi phục được hoàn toàn: $($_.Exception.Message)" }
  }
- Write-Host "[VietDub] INSTALL_FAILED: $failure" -ForegroundColor Red
+ if ($script:InstallProgress) { $script:InstallProgress.state='failed'; $script:InstallProgress.detail=$failure; SaveInstallProgress }
+ Write-Output "[VietDub] INSTALL_FAILED: $failure"
  exit 1
 }

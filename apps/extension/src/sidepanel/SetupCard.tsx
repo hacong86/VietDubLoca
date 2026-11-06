@@ -46,7 +46,7 @@ export function SetupCard() {
   return <Card title="Bắt đầu sử dụng">
     <div className="stack">
       <div className={`status ${ready ? 'ok' : 'warn'}`} role="status">{ready ? STATES.ready : STATES[s?.state ?? 'idle']}</div>
-      {ready && <p className="small">Mở video YouTube có phụ đề tiếng Anh, chuyển sang tab <b>Xem</b> rồi bấm <b>Bật tiếng Việt</b>.</p>}
+      {ready && <p className="small">Mở video YouTube có phụ đề, chuyển sang tab <b>Xem</b> rồi bấm <b>Bật tiếng Việt</b>.</p>}
       <p className="small" style={{ margin: 0 }}>Bộ đề xuất gồm mô hình dịch, giọng Việt và bộ giải mã âm thanh. Tải xong sẽ tự nạp để dùng ngay.</p>
       <ul className="small" style={{ margin: 0, paddingLeft: 20 }}>{chosen.map((m) => <li key={m.model_id}>
         <a href={`https://huggingface.co/${m.repo}`} target="_blank" rel="noreferrer">{m.label_vi || m.model_id}</a>

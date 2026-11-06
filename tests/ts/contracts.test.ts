@@ -36,6 +36,18 @@ describe('zod mirrors JSON Schema (Python và TS đọc cùng fixtures)', () => 
     b.cues[0].end_ms = 1;
     expect(CaptionBatch.safeParse(b).success).toBe(false);
   });
+  it('accepts caption language tags and rejects malformed language values in both contracts', () => {
+    const validate = ajv.compile(load('contracts/caption-batch.schema.json'));
+    const original = load('examples/caption-batch.json');
+    for (const language of ['th', 'en-US', 'zh-Hant', 'und']) {
+      expect(validate({ ...original, language })).toBe(true);
+      expect(CaptionBatch.safeParse({ ...original, language }).success).toBe(true);
+    }
+    for (const language of ['', 'english text', '../th', 'th;instruction']) {
+      expect(validate({ ...original, language })).toBe(false);
+      expect(CaptionBatch.safeParse({ ...original, language }).success).toBe(false);
+    }
+  });
   it('translation.ready payload has no model timestamps field besides source bounds', () => {
     const p = load('examples/event.json').payload;
     const r = TranslationReady.safeParse({ ...p, source_text: 'x', flags: [], start_ms: 1, end_ms: 2 });

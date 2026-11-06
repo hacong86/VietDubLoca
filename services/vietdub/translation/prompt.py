@@ -8,7 +8,7 @@ from typing import Any
 from ..paths import REPO_ROOT
 from .glossary import Glossary, Protected, protect
 
-PROMPT_VERSION = "translation-1.0"
+PROMPT_VERSION = "translation-1.1-multilingual"
 CONTEXT_TOKENS = 4096
 MAX_OUTPUT_TOKENS = 512
 SAFETY_TOKENS = 128
@@ -53,7 +53,7 @@ def output_schema(ids: list[str]) -> dict[str, Any]:
 
 def build_request(units: list[UnitInput], *, context_before: list[str], context_after: list[str], topic: str,
                   glossary: Glossary, model_alias: str, sampling: dict[str, Any],
-                  max_output_tokens: int = MAX_OUTPUT_TOKENS) -> BuiltRequest:
+                  max_output_tokens: int = MAX_OUTPUT_TOKENS, source_language: str = "en") -> BuiltRequest:
     if not units:
         raise ValueError("no units")
     protected: dict[str, Protected] = {}
@@ -71,7 +71,7 @@ def build_request(units: list[UnitInput], *, context_before: list[str], context_
     cb, ca = list(context_before), list(context_after)
 
     def compose() -> str:
-        body: dict[str, Any] = {"domain": topic, "context_before": cb, "context_after": ca,
+        body: dict[str, Any] = {"source_language": source_language, "domain": topic, "context_before": cb, "context_after": ca,
                                 "protected_codes": glossary_view, "terminology": hints, "segments": segs}
         return json.dumps(body, ensure_ascii=False)
 

@@ -24,7 +24,7 @@ _NO_SPLIT_AFTER = {"not", "don't", "doesn't", "didn't", "unless", "if", "only", 
                    "won't", "should", "shouldn't", "must", "mustn't", "never", "no", "your", "my", "this", "these",
                    "in", "on", "at", "from", "into", "by", "as", "then", "also", "just", "very", "too"}
 _CONJ = {"and", "but", "or", "so", "because", "which", "while", "although", "though", "whereas", "then"}
-_SENT_END = re.compile(r"[.?!…]+[\"'”’)\]]*$")
+_SENT_END = re.compile(r"[.?!…。！？]+[\"'”’)\]]*$")
 _DECIMAL = re.compile(r"\d[.,]\d")
 
 

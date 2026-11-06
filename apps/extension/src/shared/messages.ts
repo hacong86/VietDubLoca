@@ -35,7 +35,7 @@ export interface CaptionPayload {
   video_id: string;
   source_id: string;
   source_kind: 'manual' | 'auto' | 'import';
-  language: 'en' | 'en-US' | 'en-GB';
+  language: string;
   coverage: 'full' | 'partial' | 'current_only';
   available_until_ms: number;
   cues: CueOut[];

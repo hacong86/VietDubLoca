@@ -4,7 +4,7 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:#192337;font:16px/1.65 'Segoe UI',sans-serif}main{max-width:880px;margin:48px auto;padding:0 24px}header{margin-bottom:28px}h1{font-size:36px;line-height:1.2;margin:12px 0}h2{font-size:21px;margin:0 0 12px}p{margin:8px 0}.tag{color:#17604d;font-weight:600}.card{background:white;border:1px solid #dce2eb;border-radius:14px;padding:24px;margin:16px 0}.step{color:#3060bd;font-weight:700;font-size:14px}code{background:#eef2f8;border-radius:5px;padding:3px 6px;overflow-wrap:anywhere}.path{display:block;padding:12px;margin:12px 0;user-select:all}.muted{color:#526175}.note{border-left:4px solid #d4a33c;padding-left:14px}a{color:#2355ad}li{margin:8px 0}@media(max-width:540px){main{margin:24px auto;padding:0 16px}h1{font-size:28px}.card{padding:18px}}@media print{body{background:white}main{margin:0}.card{break-inside:avoid}}
 </style>
-<main><header><div class="tag">VietDub Local · Bản thử nghiệm 0.1.1</div><h1>Từ video tiếng Anh<br>đến giọng đọc tiếng Việt</h1><p class="muted">Cài một lần. Xử lý AI trên máy. Không cần nhập API key.</p></header>
+<main><header><div class="tag">VietDub Local · Bản thử nghiệm 0.1.2</div><h1>Từ phụ đề video<br>đến giọng đọc tiếng Việt</h1><p class="muted">Cài một lần. Xử lý AI trên máy. Không cần nhập API key.</p></header>
 <section class="card"><div class="step">BƯỚC 1 · THÊM TIỆN ÍCH</div><h2>Mở Chrome và nạp VietDub</h2>
 <ol><li>Gõ <code>chrome://extensions</code> vào thanh địa chỉ.</li><li>Bật <b>Developer mode / Chế độ dành cho nhà phát triển</b>.</li><li>Bấm <b>Load unpacked / Tải tiện ích đã giải nén</b> và chọn đúng thư mục:</li></ol>
 <code class="path">{{EXTENSION_PATH}}</code><p>Nếu bạn đang đọc hướng dẫn ngay trong gói ZIP, hãy chạy <b>Setup.cmd</b> trước. Bản hướng dẫn sau cài sẽ hiển thị đường dẫn chính xác.</p>
@@ -12,14 +12,14 @@
 <section class="card"><div class="step">BƯỚC 2 · CHUẨN BỊ LẦN ĐẦU</div><h2>Kết nối và tải bộ mô hình cần dùng</h2>
 <ol><li>Bấm biểu tượng mảnh ghép trên Chrome → <b>VietDub Local</b> → <b>Kết nối</b>.</li><li>Trong tab <b>Mô hình</b>, xem dung lượng/giấy phép, đánh dấu đồng ý rồi bấm <b>Chuẩn bị để sử dụng</b>.</li><li>Đợi tải và nạp xong bộ dịch, giọng đọc và bộ giải mã âm thanh. Khi thấy <b>Sẵn sàng dịch và đọc</b>, chuyển sang tab <b>Xem</b>.</li></ol>
 <p class="muted">Lần đầu tải vài GB từ Hugging Face. Khi mất mạng, kết nối lại rồi bấm thử lại; phần đã tải hợp lệ được dùng tiếp. Không cần tự chọn giữa nhiều model.</p></section>
-<section class="card"><div class="step">BƯỚC 3 · BẮT ĐẦU XEM</div><h2>Mở video có phụ đề tiếng Anh</h2>
-<p>Mở YouTube, chọn video có phụ đề tiếng Anh rồi bấm <b>Bật tiếng Việt</b>. Đợi thanh chuẩn bị đầu video; bạn có thể chọn <b>Xem luôn</b> nếu chấp nhận tiếng Việt đến chậm lúc đầu.</p>
+<section class="card"><div class="step">BƯỚC 3 · BẮT ĐẦU XEM</div><h2>Mở video có phụ đề</h2>
+<p>Mở YouTube, chọn video có phụ đề rồi bấm <b>Bật tiếng Việt</b>. Ứng dụng chọn một phụ đề có sẵn và hiển thị ngôn ngữ đã chọn. Đợi thanh chuẩn bị đầu video; bạn có thể chọn <b>Xem luôn</b> nếu chấp nhận tiếng Việt đến chậm lúc đầu.</p>
 <p>Âm lượng gốc và giọng Việt chỉnh riêng. Có thể tua, tạm dừng hoặc xem bản dịch song ngữ. Khi giọng đọc bị trễ nhiều, video có thể tạm dừng ngắn để bắt kịp.</p></section>
 <section class="card"><h2>Khi cần hỗ trợ</h2><ul>
 <li><b>Không kết nối:</b> mở VietDub Local từ Start Menu; kiểm lại đã cài companion bằng Setup.cmd. Khi đổi nơi cài, nạp lại extension từ đường dẫn mới.</li>
-<li><b>Không có phụ đề:</b> thử video khác hoặc nhập SRT/VTT. Muốn nhận dạng âm thanh tab, chạy lại Setup.cmd vào cùng nơi lưu, chọn nhận dạng âm thanh; sau đó chọn thêm model ASR trong phần chuẩn bị.</li>
+<li><b>Không có phụ đề:</b> thử video khác hoặc nhập SRT/VTT. Nhận dạng âm thanh tab hiện chỉ hỗ trợ tiếng Anh: chạy lại Setup.cmd vào cùng nơi lưu, chọn nhận dạng âm thanh; sau đó chọn thêm model ASR trong phần chuẩn bị.</li>
 <li><b>Tải bị lỗi:</b> kiểm mạng/dung lượng ổ đĩa, thử lại. Không bỏ qua lỗi checksum.</li>
-<li><b>Cập nhật:</b> chạy Setup.cmd bản mới vào cùng nơi lưu; sau đó bấm Reload trên trang tiện ích Chrome. Dữ liệu và model vẫn được giữ.</li>
+<li><b>Cập nhật:</b> mở nơi lưu VietDub, nhấp đúp <code>Cap-nhat-VietDub.cmd</code>, đồng ý tải bản mới và bấm Cài đặt. Sau đó bấm Tải lại trên trang tiện ích Chrome. Dữ liệu và model vẫn được giữ; thành phần mới có thể cần tải thêm.</li>
 <li><b>Nhật ký:</b> trong nơi lưu, xem <code>logs/install.log</code>, <code>logs/setup-error.log</code> hoặc mở tab Chẩn đoán.</li></ul>
 <p class="muted">AI chạy cục bộ; Internet vẫn cần cho YouTube và tải thành phần lần đầu. Bản này chưa ký số, chưa kiểm trên mọi máy Windows/GPU. Độ đúng của bản dịch cần người dùng đối chiếu khi nội dung quan trọng.</p></section>
 </main></html>

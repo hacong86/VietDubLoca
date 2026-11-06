@@ -165,6 +165,21 @@ def test_cache_key_differs_by_context_model_glossary():
     assert len({a, b, c, d}) == 4
 
 
+def test_thai_language_reaches_prompt_and_cache_is_separated():
+    unit = _u("u1", "สวัสดีครับ")
+    backend = FakeBackend(['{"translations":[{"segment_id":"u1","target_text":"Xin chào."}]}'])
+    [result] = asyncio.run(translate_batch(backend, [unit], topic="general", glossary=Glossary(), fp=FP, source_language="th"))
+    assert result.status == "READY"
+    sent = json.loads(backend.calls[0]["messages"][1]["content"])
+    assert sent["source_language"] == "th" and sent["segments"][0]["source_text"] == unit.source_text
+    assert result.cache_key != translation_cache_key(unit, topic="general", glossary_version=Glossary().version, fp=FP, source_language="en")
+
+
+def test_cjk_sentence_boundaries_keep_text_and_timestamps():
+    units = build_units("s", [Cue("a", 1000, 2000, "你好。"), Cue("b", 2000, 3000, "再见！")], complete=True)
+    assert [(u.source_text, u.start_ms, u.end_ms) for u in units] == [("你好。", 1000, 2000), ("再见！", 2000, 3000)]
+
+
 def test_plan_batches_limits():
     us = [_u(f"u{i}", "word " * 50) for i in range(5)]
     bs = plan_batches(us)

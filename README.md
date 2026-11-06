@@ -1,20 +1,29 @@
 # VietDub Local
 
-Dịch phụ đề YouTube tiếng Anh sang tiếng Việt và đọc thuyết minh bằng AI chạy trên máy Windows. Không cần API key. Internet cần cho YouTube và tải thành phần ban đầu.
+Dịch phụ đề YouTube sang tiếng Việt và đọc thuyết minh bằng AI chạy trên máy Windows. Không cần API key. Internet cần cho YouTube và tải thành phần ban đầu.
 
-**0.1.1 preview — bản dùng thử**, chưa phát hành Chrome Web Store và chưa được xác nhận trên Windows sạch/mọi GPU. Mã nguồn được chia sẻ theo **[PolyForm Noncommercial 1.0.0](LICENSE)**; sử dụng phi thương mại theo các điều khoản của giấy phép. Thành phần bên thứ ba giữ giấy phép riêng, xem [NOTICE](NOTICE) và [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+**0.1.2 preview — bản dùng thử**, chưa phát hành Chrome Web Store và chưa được xác nhận trên Windows sạch/mọi GPU. Mã nguồn được chia sẻ theo **[PolyForm Noncommercial 1.0.0](LICENSE)**; sử dụng phi thương mại theo các điều khoản của giấy phép. Thành phần bên thứ ba giữ giấy phép riêng, xem [NOTICE](NOTICE) và [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-**[Tải bộ cài Windows](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.1-preview)** · **[Hướng dẫn cài mới hoàn toàn bằng tiếng Việt](docs/CAI_MOI_TU_GITHUB.md)**
+**[Tải bộ cài Windows](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.2-preview)** · **[Hướng dẫn cài mới hoàn toàn bằng tiếng Việt](docs/CAI_MOI_TU_GITHUB.md)**
 
-Tại trang Release, mở **Assets**, tải `VietDubLocal-0.1.1-win-x64.zip` và `SHA256SUMS.txt`. Không chọn **Source code (zip)** để cài ứng dụng: đó là mã nguồn dành cho người phát triển. ZIP khoảng 19 MB; khi cài còn tải vài GB thư viện và khoảng 3,55 GB model cơ bản.
+Tại trang Release, mở **Assets**, tải `VietDubLocal-0.1.2-win-x64.zip` và `SHA256SUMS.txt`. Không chọn **Source code (zip)** để cài ứng dụng: đó là mã nguồn dành cho người phát triển. ZIP khoảng 19 MB; khi cài còn tải vài GB thư viện và khoảng 3,55 GB model cơ bản.
+
+## Điểm mới 0.1.2
+
+- Hiện bước cài, công việc hiện tại, thư viện đang tải, thời gian chạy và log trực tiếp. Tệp runtime có số byte/tổng và phần trăm; khi chưa biết tổng, thanh chạy chỉ biểu thị đang xử lý.
+- Sửa báo thất bại dù bộ cài đã hoàn tất do mã thoát rỗng trên PowerShell 5.1.
+- Ô đồng ý tải được tích sẵn; có thể bỏ tích. Chỉ tải khi bấm **Cài đặt**.
+- Chọn phụ đề YouTube theo thông tin ngôn ngữ có sẵn và gửi ngôn ngữ nguồn tới bộ dịch; chẳng hạn phụ đề tiếng Thái được dịch sang tiếng Việt. Chất lượng và việc chọn đúng phụ đề tùy từng video. Nhận dạng âm thanh không có phụ đề vẫn chỉ hỗ trợ tiếng Anh.
+- Sau khi cài, mở tệp `Cap-nhat-VietDub.cmd` tại nơi lưu để tải bản mới; model đã tải được giữ lại. Bản 0.1.1 có thể tải riêng tệp `Cap-nhat-tu-0.1.1.cmd` và chọn nơi cài cũ.
+- Bản 0.1.1 đang dùng vẫn có thể tiếp tục tải model/xem video; không bắt buộc cài lại để dùng chức năng hiện tại.
 
 ## Cài và dùng
 
 1. Tải ZIP Windows ở trang Release phía trên và giải nén toàn bộ vào một thư mục.
-2. Nhấp đúp **Setup.cmd**. Chọn nơi lưu có ít nhất 20 GB trống; xem thông tin tải, đánh dấu đồng ý và bấm **Cài đặt**. Chức năng nhận dạng âm thanh là tùy chọn. Không cần tự cài Python/Node hoặc quyền quản trị.
+2. Nhấp đúp **Setup.cmd**. Chọn nơi lưu có ít nhất 20 GB trống; xem thông tin tải rồi bấm **Cài đặt**. Ô đồng ý tải đã tích sẵn và bạn có thể bỏ tích. Chức năng nhận dạng âm thanh là tùy chọn. Không cần tự cài Python/Node hoặc quyền quản trị.
 3. Mở hướng dẫn sau cài. Trong Chrome, vào `chrome://extensions`, bật **Developer mode**, chọn **Load unpacked** và chọn thư mục **extension tại nơi đã cài**. Không chọn extension trong gói ZIP tạm.
 4. Mở VietDub → **Kết nối** → tab **Mô hình**. Xem dung lượng/giấy phép, đồng ý rồi bấm **Chuẩn bị để sử dụng**. Ứng dụng tải, kiểm và nạp đủ bộ dịch Qwen, giọng VieNeu và codec MOSS.
-5. Khi báo **Sẵn sàng dịch và đọc**, mở video YouTube có phụ đề tiếng Anh, vào tab **Xem** → **Bật tiếng Việt**.
+5. Khi báo **Sẵn sàng dịch và đọc**, mở video YouTube có phụ đề, vào tab **Xem** → **Bật tiếng Việt**; kiểm ngôn ngữ đã chọn trong thông tin nguồn.
 
 Máy đích: Windows 10/11 x64, NVIDIA GPU và driver tương thích runtime CUDA đã ghim; cấu hình tham chiếu là RAM 32 GB/RTX 3060 12 GB. Chưa công bố cấu hình tối thiểu đã đo trên nhiều máy. Bản cài kiểm kiến trúc, dung lượng, sự hiện diện driver; điều đó không thay thử nạp model trên từng GPU.
 
@@ -51,4 +60,4 @@ Các bài kiểm GPU/YouTube thật được tách khỏi unit test; không suy 
 
 ## Kết quả kiểm bản preview
 
-Trước đóng gói công khai: 92 test Python đạt, 2 test tích hợp AI bỏ qua; 31 test TypeScript đạt; typecheck/build đạt. Đã cài thư viện mới trong thư mục riêng, kiểm cài lại/gỡ giữ dữ liệu, native handshake và broker thật. UI Chrome được kiểm bằng API mô phỏng; chưa kiểm lại toàn bộ YouTube + suy luận AI/GPU trên bản preview này. Gói tải từ Release còn được kiểm checksum/giải nén trước bàn giao. Hãy dùng hướng dẫn cài sạch để thử trên máy của bạn và báo kết quả, không coi các test này là bảo đảm mọi cấu hình đều chạy.
+Các kiểm thử tự động dùng runtime giả cho luồng phụ đề, không đánh giá chất lượng dịch thật. Đã tái hiện lỗi mã thoát PowerShell và kiểm tiến trình thật trả mã 0/7, log cập nhật trước khi kết thúc, byte/phần trăm có số đo. Bản preview vẫn cần kiểm với video thực tế, mô hình AI và GPU của từng máy.

@@ -48,8 +48,9 @@ def main() -> None:
     checks = []
     try:
         hello = exchange({'type':'hello', 'protocol_version':1})
-        assert hello['compatible'] and hello['app_version'] == '0.1.1', hello
-        checks.append('native .cmd at Unicode path; hello version 0.1.1')
+        expected = json.loads((owned.parent / 'package.json').read_text('utf-8'))['version']
+        assert hello['compatible'] and hello['app_version'] == expected, hello
+        checks.append('native .cmd at Unicode path; hello version ' + expected)
         paired = exchange({'type':'start'})
         assert paired.get('type') == 'paired', paired.get('code', 'not paired')
         checks.append('native start launches real installed companion and pairs')

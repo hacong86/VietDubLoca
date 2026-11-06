@@ -101,12 +101,19 @@
     const details = (resp?.videoDetails ?? {}) as Record<string, unknown>;
     const tl = ((resp?.captions as Record<string, unknown> | undefined)?.playerCaptionsTracklistRenderer ?? {}) as Record<string, unknown>;
     const tracks = Array.isArray(tl.captionTracks) ? (tl.captionTracks as Record<string, unknown>[]) : [];
+    const audioTracks = Array.isArray(tl.audioTracks) ? tl.audioTracks as Record<string, unknown>[] : [];
+    const audioIndex = Number.isInteger(tl.defaultAudioTrackIndex) ? Number(tl.defaultAudioTrackIndex) : 0;
+    const defaultIndex = audioTracks[audioIndex]?.defaultCaptionTrackIndex;
+    const microformat = ((resp?.microformat as Record<string, unknown> | undefined)?.playerMicroformatRenderer ?? {}) as Record<string, unknown>;
+    const originalLanguage = microformat.defaultAudioLanguage ?? details.defaultAudioLanguage;
     const vd = p?.getVideoData?.() ?? {};
     return {
       video_id: String(vd.video_id ?? details.videoId ?? '').slice(0, 20),
       title: String(vd.title ?? details.title ?? '').slice(0, 500),
       duration_s: Number(details.lengthSeconds ?? 0) || undefined,
       is_live: Boolean(vd.isLive ?? details.isLive ?? false),
+      ...(typeof defaultIndex === 'number' && Number.isInteger(defaultIndex) && defaultIndex >= 0 && defaultIndex < Math.min(tracks.length, 100) ? { original_track_index: defaultIndex } : {}),
+      ...(typeof originalLanguage === 'string' && originalLanguage.length <= 20 ? { original_language: originalLanguage } : {}),
       tracks: tracks.slice(0, 100).map((t) => ({
         base_url: String(t.baseUrl ?? '').slice(0, 4096),
         language_code: String(t.languageCode ?? '').slice(0, 20),

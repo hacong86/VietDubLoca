@@ -8,7 +8,7 @@ import { cuesFromTranscript, parseJson3, parseTimedtextBody, type ParsedCue } fr
 import type { CaptionPayload } from '../shared/messages';
 import { readTranscriptDom } from './youtube';
 
-const EN = ['en', 'en-US', 'en-GB'] as const;
+const LANG = /^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/;
 
 function askBridge(type: 'get_player_info' | 'trigger_captions', extra: Record<string, unknown> = {}, timeoutMs = 4000): Promise<BridgePlayerInfo | null> {
   return new Promise((resolve) => {
@@ -58,15 +58,22 @@ async function fetchJson3(url: URL): Promise<ParsedCue[]> {
   }
 }
 
-function pickTracks(info: BridgePlayerInfo) {
-  const en = info.tracks.filter((t) => EN.some((l) => t.language_code === l || t.language_code.startsWith('en')));
-  const manual = en.filter((t) => t.kind !== 'asr').sort((a, b) => EN.indexOf(a.language_code as never) - EN.indexOf(b.language_code as never));
-  const auto = en.filter((t) => t.kind === 'asr');
-  return [...manual.map((t) => ({ t, auto: false })), ...auto.map((t) => ({ t, auto: true }))];
+export function pickTracks(info: BridgePlayerInfo) {
+  const tracks = info.tracks.filter((t) => t.language_code.length <= 20 && LANG.test(t.language_code));
+  // Prefer YouTube's original audio language when exposed, then an auto-generated
+  // track, then the default track. The fallback is only a hint, not a guarantee.
+  const originalBase = info.original_language && LANG.test(info.original_language) ? info.original_language.toLowerCase().split('-')[0] : undefined;
+  const preferred = tracks.find((t) => t.language_code.toLowerCase().split('-')[0] === originalBase)
+    ?? tracks.find((t) => t.kind === 'asr')
+    ?? (info.original_track_index === undefined ? undefined : info.tracks[info.original_track_index]) ?? tracks[0];
+  const base = preferred?.language_code.toLowerCase().split('-')[0];
+  return tracks.map((t, index) => ({ t, auto: t.kind === 'asr', index }))
+    .sort((a, b) => Number(b.t.language_code.toLowerCase().split('-')[0] === base) - Number(a.t.language_code.toLowerCase().split('-')[0] === base)
+      || Number(a.auto) - Number(b.auto) || a.index - b.index);
 }
 
 function toPayload(videoId: string, cues: ParsedCue[], kind: 'manual' | 'auto', lang: string, label: string, coverage: CaptionPayload['coverage'], tried: string[], sourceId: string): CaptionPayload {
-  const language = (EN as readonly string[]).includes(lang) ? (lang as CaptionPayload['language']) : 'en';
+  const language = LANG.test(lang) && lang.length <= 20 ? lang : 'und';
   return {
     video_id: videoId, source_id: sourceId.slice(0, 128), source_kind: kind, language, coverage, label, tried,
     available_until_ms: cues.reduce((m, c) => Math.max(m, c.endMs), 0),
@@ -83,9 +90,9 @@ export async function discoverCaptions(videoId: string, durationMs: number | und
   }
   if (info && info.video_id === videoId) {
     const tracks = pickTracks(info);
-    if (tracks.length === 0) tried.push('Dữ liệu trang: video không có phụ đề tiếng Anh');
+    if (tracks.length === 0) tried.push('Dữ liệu trang: không tìm thấy phụ đề có mã ngôn ngữ hợp lệ');
     for (const { t, auto } of tracks) {
-      const label = `${auto ? 'Phụ đề tự động' : 'Phụ đề'} tiếng Anh (${t.language_code})`;
+      const label = `${auto ? 'Phụ đề tự động' : 'Phụ đề'} ${t.name || t.language_code} (${t.language_code})`;
       const kind = auto ? 'asr' : '';
       const fromBody = (inf: BridgePlayerInfo | null): ParsedCue[] => {
         const b = inf?.captured_bodies?.find((x) => x.video_id === videoId && x.lang === t.language_code && x.kind === kind);
@@ -124,9 +131,9 @@ export async function discoverCaptions(videoId: string, durationMs: number | und
     const last = cues.length ? cues[cues.length - 1]!.endMs : 0;
     const coverage: CaptionPayload['coverage'] = dom.stable && (!durationMs || last >= durationMs - 60_000) ? 'full' : 'partial';
     tried.push(`Bản chép lời trên trang: ${cues.length} dòng (${coverage === 'full' ? 'đủ' : 'một phần'})`);
-    if (cues.length) return { ok: true, payload: toPayload(videoId, cues, 'manual', 'en', 'Bản chép lời trên trang', coverage, tried, `yt-${videoId}-transcript`) };
+    if (cues.length) return { ok: true, payload: toPayload(videoId, cues, 'manual', 'und', 'Bản chép lời trên trang (tự nhận diện ngôn ngữ)', coverage, tried, `yt-${videoId}-transcript`) };
   } else {
     tried.push('Bản chép lời trên trang: không có');
   }
-  return { ok: false, reason: 'Không lấy được phụ đề tiếng Anh cho video này', tried };
+  return { ok: false, reason: 'Không lấy được phụ đề cho video này', tried };
 }

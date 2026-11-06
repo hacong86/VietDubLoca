@@ -53,6 +53,33 @@ def start(client, token):
     return r.json()["session_id"]
 
 
+def test_thai_caption_reaches_translation_and_audio(client, token, ctx):
+    import json
+    seen = []
+    original = ctx.rt.chat
+
+    async def record(payload):
+        seen.append(json.loads(payload["messages"][1]["content"]))
+        return await original(payload)
+
+    ctx.rt.chat = record
+    sid = start(client, token)
+    ws, w = ws_auth(client, token)
+    try:
+        w.send_json({"type": "subscribe", "session_id": sid})
+        captions = batch(sid, 0, [{"cue_id": "c1", "start_ms": 10000, "end_ms": 12000,
+                                   "text": "สวัสดีครับ", "committed": True}], source_id="yt-th")
+        captions["language"] = "th"
+        assert client.post(f"/v1/sessions/{sid}/captions", headers=H(token), json=captions).status_code == 202
+        assert client.post(f"/v1/sessions/{sid}/clock", headers=H(token), json=clock(sid, 0, 9000)).status_code == 204
+        events, frames = collect(w, lambda e, f: any(x["event"] == "audio.end" for x in e))
+        assert seen and seen[0]["source_language"] == "th"
+        assert seen[0]["segments"][0]["source_text"] == "สวัสดีครับ"
+        assert any(e["event"] == "translation.ready" for e in events) and frames
+    finally:
+        ws.__exit__(None, None, None)
+
+
 def test_full_pipeline_epoch_and_revision(client, token, ctx):
     sid = start(client, token)
     ws, w = ws_auth(client, token)

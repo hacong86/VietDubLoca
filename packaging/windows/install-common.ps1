@@ -56,7 +56,7 @@ function ReadVerifiedPackage([string]$Root) {
         $p = ChildPath $Root $f.path
         if (-not (Test-Path -LiteralPath $p -PathType Leaf) -or (Sha $p) -ne $f.sha256) { throw "Gói hỏng hoặc bị sửa: $($f.path). Hãy giải nén lại bản tải chính thức." }
     }
-    foreach ($required in @('install.ps1','install-common.ps1','uninstall.ps1','Setup.cmd','setup.ps1','HUONG-DAN.html','LICENSE','NOTICE','app/LICENSE','app/NOTICE','extension/LICENSE','extension/NOTICE','app/bin/uv.exe','app/requirements/broker.lock.txt','app/requirements/tts.lock.txt','app/requirements/asr.lock.txt','extension/manifest.json')) {
+    foreach ($required in @('install.ps1','install-common.ps1','uninstall.ps1','Setup.cmd','setup.ps1','HUONG-DAN.html','Cap-nhat-VietDub.cmd','update.ps1','LICENSE','NOTICE','app/LICENSE','app/NOTICE','extension/LICENSE','extension/NOTICE','app/bin/uv.exe','app/requirements/broker.lock.txt','app/requirements/tts.lock.txt','app/requirements/asr.lock.txt','extension/manifest.json')) {
         if (-not $seen.ContainsKey($required)) { throw "Thiếu thành phần bắt buộc: $required" }
     }
     $ext = Get-Content -Raw -Encoding UTF8 -LiteralPath (Join-Path $Root 'extension\manifest.json') | ConvertFrom-Json
@@ -65,12 +65,84 @@ function ReadVerifiedPackage([string]$Root) {
     if ($id -ne $m.extension_ids[0] -or $ext.version -ne $m.version) { throw 'Tiện ích và bộ cài không cùng bản/ID.' }
     return $m
 }
-function InvokeNativeChecked([string]$Exe, [string[]]$Arguments, [string]$LogPath, [string]$Step) {
-    Write-Host "[VietDub] $Step"
+function InvokeNativeChecked([string]$Exe, [string[]]$Arguments, [string]$LogPath, [string]$Step, [string]$DownloadPath='', [long]$TotalBytes=0) {
+    Write-Output "[VietDub] $Step"
+    if ($script:InstallProgress) { SetInstallActivity $Step $DownloadPath $TotalBytes }
+    $pendingDownloads = @{}
     $old = $ErrorActionPreference; $ErrorActionPreference = 'Continue'
     try {
-        & $Exe @Arguments 2>&1 | ForEach-Object { Add-Content -Encoding UTF8 -LiteralPath $LogPath -Value "$_" }
+        & $Exe @Arguments 2>&1 | ForEach-Object {
+            $line = ([string]$_) -replace '\x1b\[[0-9;?]*[A-Za-z]', ''
+            Add-Content -Encoding UTF8 -LiteralPath $LogPath -Value $line
+            if ($script:InstallLiveLog) { Add-Content -Encoding UTF8 -LiteralPath $script:InstallLiveLog -Value $line }
+            if ($script:InstallProgress) {
+                if ($line.Trim() -match '^Downloading\s+([^\s(]+)(.*)$') { $pendingDownloads[$matches[1]] = $matches[1] + $matches[2] }
+                elseif ($line.Trim() -match '^Downloaded\s+([^\s(]+)') { $pendingDownloads.Remove($matches[1]) }
+                $script:InstallProgress.pending_downloads = @($pendingDownloads.Values | Sort-Object)
+                $script:InstallProgress.detail = $line.Trim()
+                SaveInstallProgress
+            }
+        }
         $code = $LASTEXITCODE
     } finally { $ErrorActionPreference = $old }
     if ($code -ne 0) { throw "$Step thất bại (mã $code). Xem $LogPath. Có thể chạy lại Setup.cmd để tiếp tục." }
+}
+
+# Installer writes an atomic snapshot; GUI reads it without sharing process state.
+function StartInstallProgress([string]$Path, [string]$LiveLog) {
+    $script:InstallProgressPath = $Path; $script:InstallLiveLog = $LiveLog
+    WriteText $LiveLog ''
+    $script:InstallProgress = @{ step=1; total_steps=7; state='running'; activity='Kiểm tra gói cài đặt'; detail='';
+        pending_downloads=@(); download_path=''; total_bytes=0; updated_utc='' }
+    SaveInstallProgress
+}
+function SaveInstallProgress {
+    if (-not $script:InstallProgressPath) { return }
+    try {
+        $script:InstallProgress.updated_utc = [DateTime]::UtcNow.ToString('o')
+        $tmp = $script:InstallProgressPath + '.tmp'
+        WriteText $tmp ($script:InstallProgress | ConvertTo-Json -Depth 5 -Compress)
+        if (Test-Path -LiteralPath $script:InstallProgressPath) { [IO.File]::Replace($tmp,$script:InstallProgressPath,[NullString]::Value) }
+        else { [IO.File]::Move($tmp,$script:InstallProgressPath) }
+    } catch { } # A telemetry read/write race must not break the installation.
+}
+function SetInstallActivity([string]$Activity, [string]$DownloadPath='', [long]$TotalBytes=0) {
+    if (-not $script:InstallProgress) { return }
+    $script:InstallProgress.activity=$Activity; $script:InstallProgress.detail=''
+    $script:InstallProgress.pending_downloads=@(); $script:InstallProgress.download_path=$DownloadPath
+    $script:InstallProgress.total_bytes=$TotalBytes
+    SaveInstallProgress
+}
+function FormatInstallBytes([long]$Bytes) {
+    if ($Bytes -ge 1GB) { return ('{0:N2} GiB' -f ($Bytes / 1GB)) }
+    return ('{0:N1} MiB' -f ($Bytes / 1MB))
+}
+function InstallProgressView($Progress) {
+    $step=[Math]::Max(0,[Math]::Min(7,[int]$Progress.step))
+    $view=@{ completed=[Math]::Max(0,$step-1); title="Bước $step/7 — các bước có thời lượng khác nhau";
+        activity=[string]$Progress.activity; detail='Đang xử lý; chưa có tổng dung lượng để tính phần trăm.'; percent=$null }
+    if ($Progress.state -eq 'done') { $view.completed=7; $view.title='Đã cài đặt xong'; $view.detail='Bấm Mở hướng dẫn để thêm tiện ích vào Chrome.'; $view.percent=100 }
+    elseif ($Progress.state -eq 'failed') { $view.title="Chưa cài xong — bước $step/7"; $view.detail=[string]$Progress.detail }
+    elseif ($Progress.download_path -and [long]$Progress.total_bytes -gt 0) {
+        $bytes=0L
+        if (Test-Path -LiteralPath $Progress.download_path) { $bytes=(Get-Item -LiteralPath $Progress.download_path).Length }
+        $view.percent=[int][Math]::Min(100,[Math]::Floor(100.0*$bytes/[long]$Progress.total_bytes))
+        $view.detail="Đã tải $(FormatInstallBytes $bytes) / $(FormatInstallBytes $Progress.total_bytes) ($($view.percent)% của tệp này)."
+    } elseif ($Progress.pending_downloads -and @($Progress.pending_downloads).Count -gt 0) {
+        $view.detail='Đang tải: '+(@($Progress.pending_downloads) -join ', ')
+    } elseif ($Progress.detail) { $view.detail=[string]$Progress.detail }
+    return $view
+}
+function ReadInstallLogTail([string]$Path) {
+    if (-not $Path -or -not (Test-Path -LiteralPath $Path)) { return '' }
+    $lines=@(Get-Content -LiteralPath $Path -Encoding UTF8 -Tail 80 -ErrorAction Stop)
+    # WinForms TextBox needs CRLF; redirected PowerShell output may contain LF only.
+    return (($lines -join "`n") -replace "`r?`n", "`r`n")
+}
+function StartInstallerProcess([string]$EncodedCommand,[string]$StdoutPath,[string]$StderrPath) {
+    $process=Start-Process -FilePath 'powershell.exe' -ArgumentList @('-NoProfile','-NonInteractive','-OutputFormat','Text','-ExecutionPolicy','Bypass','-EncodedCommand',$EncodedCommand) -WindowStyle Hidden -RedirectStandardOutput $StdoutPath -RedirectStandardError $StderrPath -PassThru
+    # PS 5.1 can lose ExitCode after Refresh/HasExited unless the native handle
+    # is held while the child is alive. Never infer success from a log substring.
+    $null=$process.Handle
+    return $process
 }
