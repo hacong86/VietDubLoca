@@ -9,7 +9,7 @@ from ..hashing import NORMALIZER_VERSION, content_key, sha256_hex
 from .glossary import Glossary, restore
 from .llm import LlmResult
 from .prompt import PROMPT_VERSION, UnitInput, build_repair, build_request
-from .spoken import PHONETIC_RULES_VERSION, to_spoken
+from .spoken import PHONETIC_RULES_VERSION, is_sound_only, sound_description, strip_sound_annotations, to_spoken
 from .validate import parse_and_check
 
 MAX_UNITS_PER_BATCH = 3
@@ -61,10 +61,13 @@ def context_hash(before: list[str], after: list[str]) -> str:
 
 
 def translation_cache_key(u: UnitRequest, *, topic: str, glossary_version: int, fp: ModelFingerprint, source_language: str = "en") -> str:
-    return content_key({"src": u.source_text, "src_hash": u.source_hash,
+    fields = {"src": u.source_text, "src_hash": u.source_hash,
                         "ctx": context_hash(u.context_before, u.context_after), "sl": source_language.lower(), "tl": "vi",
                         "topic": topic, "glossary_version": glossary_version, "prompt": PROMPT_VERSION,
-                        "model": fp.value(), "norm": NORMALIZER_VERSION})
+                        "model": fp.value(), "norm": NORMALIZER_VERSION}
+    if strip_sound_annotations(u.source_text) != u.source_text:
+        fields["sound_filter"] = PHONETIC_RULES_VERSION
+    return content_key(fields)
 
 
 class TranslationCache(Protocol):
@@ -98,16 +101,22 @@ async def translate_batch(backend: ChatBackend, units: list[UnitRequest], *, top
     todo: list[UnitRequest] = []
     for u in units:
         key = translation_cache_key(u, topic=topic, glossary_version=glossary.version, fp=fp, source_language=source_language)
+        label = sound_description(u.source_text)
+        if label is not None:
+            results[u.segment_id] = UnitResult(u.segment_id, "READY", label, "", key,
+                                               context_hash(u.context_before, u.context_after), ["NON_SPEECH"])
+            continue
         hit = cache.get(key) if cache else None
         if hit and hit.get("status") in ("READY",):
-            results[u.segment_id] = UnitResult(u.segment_id, "READY", hit["target_display"], hit["target_spoken"],
+            spoken = "" if is_sound_only(u.source_text) else to_spoken(hit["target_spoken"])
+            results[u.segment_id] = UnitResult(u.segment_id, "READY", hit["target_display"], spoken,
                                                key, context_hash(u.context_before, u.context_after),
                                                list(hit.get("flags", [])), True)
         else:
             todo.append(u)
     if todo:
         # Context chung của nhóm: trước unit đầu, sau unit cuối.
-        req = build_request([UnitInput(u.segment_id, u.source_text) for u in todo],
+        req = build_request([UnitInput(u.segment_id, strip_sound_annotations(u.source_text) or u.source_text) for u in todo],
                             context_before=todo[0].context_before, context_after=todo[-1].context_after,
                             topic=topic, glossary=glossary, model_alias=fp.alias, sampling=fp.sampling, source_language=source_language)
         expected = {sid: {"source": p.text, "counts": p.expected_counts, "mapping": p.mapping}
@@ -148,7 +157,7 @@ async def translate_batch(backend: ChatBackend, units: list[UnitRequest], *, top
             spoken_map = dict(pron)
             for ph, say in p.spoken.items():
                 spoken_map[p.mapping[ph]] = say
-            spoken = to_spoken(display, spoken_map)
+            spoken = "" if is_sound_only(u.source_text) else to_spoken(display, spoken_map)
             flags = list(uc.warnings) + (["REPAIRED"] if repaired and u.segment_id in needs else [])
             results[u.segment_id] = UnitResult(u.segment_id, "READY", display, spoken, key, ch, flags,
                                                latency_ms=total_ms)

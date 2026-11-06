@@ -323,7 +323,7 @@ export class AudioEngine {
     const now = mediaNow(this.anchor, this.ctx.currentTime);
     const spans = Array.from(this.segments.values()).map((s) => {
       const it = this.items.get(s.segment_id);
-      const ready = s.status === 'blocked' || s.status === 'skipped_by_user' || (!!it && it.complete && it.epoch === this.epoch);
+      const ready = s.status === 'blocked' || s.status === 'skipped_by_user' || s.status === 'silent' || (!!it && it.complete && it.epoch === this.epoch);
       return { startMs: s.start_ms, endMs: s.end_ms, ready };
     });
     return preloadProgress(spans, now, this.preload?.targetMs ?? 0, this.sourceComplete);
@@ -393,6 +393,7 @@ export class AudioEngine {
     const ordered = Array.from(this.segments.values()).sort((a, b) => a.start_ms - b.start_ms);
     const isChained = (segId: string) => { for (const k of this.chained) if (k.startsWith(segId + '@')) return true; return false; };
     for (const seg of ordered) {
+      if (seg.status === 'silent') continue;
       if (seg.end_ms < now - 1000 && !isChained(seg.segment_id)) continue;   // câu đang xếp hàng thì không bỏ dù đã trễ
       if (seg.start_ms > now + HORIZON_S * 1000 * this.anchor.rate + 400) break;
       const it = this.items.get(seg.segment_id);

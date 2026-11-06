@@ -114,6 +114,22 @@ def test_spoken_does_not_change_display_and_escapes_tags():
     assert "gờ pê u" in sp and "[" not in sp and disp == "Tắt GPU [cười] rồi mở Inspector"
 
 
+@pytest.mark.parametrize("display", ["[Nhạc]", "(vỗ tay)", "Nhạc, nhạc...", "[Music] [Applause]", "♪ nhạc ♪", "[เสียงเพลง]"])
+def test_sound_descriptions_are_not_read(display):
+    assert to_spoken(display) == ""
+
+
+@pytest.mark.parametrize("display,expected", [
+    ("[Nhạc] Xin chào các bạn! [Vỗ tay]", "Xin chào các bạn!"),
+    ("(music) Chúng ta bắt đầu.", "Chúng ta bắt đầu."),
+    ("Bài nhạc này rất hay.", "Bài nhạc này rất hay."),
+    ("Hãy vỗ tay cho cô ấy!", "Hãy vỗ tay cho cô ấy!"),
+    ("Tôi [nhớ bạn] lắm.", "Tôi (nhớ bạn) lắm."),
+])
+def test_sound_annotation_removed_without_losing_dialogue(display, expected):
+    assert to_spoken(display) == expected
+
+
 def test_prompt_context_separate_and_reduced_before_source():
     g = Glossary()
     long_ctx = ["x " * 6000]
@@ -143,6 +159,27 @@ FP = ModelFingerprint("qwen35_4b_q5", "qwen35_4b_q5", "a" * 64, "b11126", {"temp
 
 def _u(sid, text, before=None):
     return UnitRequest(sid, text, "h" + sid, before or [], [])
+
+
+def test_sound_only_source_uses_no_model_and_old_cache_has_no_voice():
+    class OldCache:
+        def get(self, key):
+            return {"status": "READY", "target_display": "[nhạc] Xin chào.", "target_spoken": "(nhạc) Xin chào."}
+
+    backend = FakeBackend([])
+    units = [_u("u1", "[Music]"), _u("u2", "[เสียงปรบมือ]"), _u("u3", "Hello there.")]
+    result = asyncio.run(translate_batch(backend, units, topic="general", glossary=Glossary(), fp=FP, cache=OldCache()))
+    assert [(r.target_display, r.target_spoken) for r in result] == [('[nhạc]', ''), ('[vỗ tay]', ''), ('[nhạc] Xin chào.', 'Xin chào.')]
+    assert not backend.calls and all(r.status == "READY" for r in result)
+
+
+def test_mixed_source_drops_sound_label_before_translation():
+    source = "[Music] Hello, my friend. [Applause]"
+    backend = FakeBackend(['{"translations":[{"segment_id":"u1","target_text":"Xin chào bạn."}]}'])
+    [result] = asyncio.run(translate_batch(backend, [_u("u1", source)], topic="general", glossary=Glossary(), fp=FP))
+    assert result.target_spoken == "Xin chào bạn."
+    body = json.loads(backend.calls[0]["messages"][1]["content"])
+    assert body["segments"][0]["source_text"] == "Hello, my friend."
 
 
 def test_translate_repair_once_then_block():

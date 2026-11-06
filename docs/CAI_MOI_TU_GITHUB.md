@@ -2,21 +2,12 @@
 
 VietDub dịch phụ đề YouTube sang tiếng Việt và đọc bằng giọng Việt. Bản này dành cho Windows 10/11 64-bit, máy có NVIDIA; khuyên dùng RAM 32 GB và ổ đĩa còn trống ít nhất 20 GB. Lần đầu cần mạng để tải các thành phần và mô hình AI.
 
-## Nếu bạn đã cài bản 0.1.1
-
-Tải tệp cập nhật nhỏ một lần; tệp này tự tải và giải nén bản mới. Các mô hình đã tải được giữ lại nếu bạn chọn **đúng thư mục đã cài trước đó**.
-
-1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.4-preview), tìm mục **Assets**, tải **Cap-nhat-tu-0.1.1.cmd**.
-2. Nhấp đúp tệp vừa tải. Chọn đúng thư mục cài cũ rồi bấm **OK**. Ví dụ nếu lần trước chọn `J:\J2TEAM\setting`, hãy chọn lại chính thư mục này.
-3. Chọn **Yes / Có** để tải bản mới. Khi cửa sổ cài đặt hiện ra, bấm **Cài đặt** và chờ thông báo hoàn tất. Bộ cài dùng lại các thành phần còn phù hợp; chỉ tải phần còn thiếu hoặc thay đổi.
-4. Mở Chrome, gõ `chrome://extensions` vào thanh địa chỉ, tìm VietDub Local và bấm nút **Tải lại** hình mũi tên tròn.
-
 ## Cài lần đầu
 
 ### 1. Tải bộ cài
 
-1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.4-preview).
-2. Cuộn xuống mục **Assets**. Bấm **VietDubLocal-0.1.4-win-x64.zip** để tải. Không chọn mục **Source code**.
+1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.5-preview).
+2. Cuộn xuống mục **Assets**. Bấm **VietDubLocal-0.1.5-win-x64.zip** để tải. Không chọn mục **Source code**.
 
 ### 2. Giải nén và cài
 
@@ -55,7 +46,7 @@ Tệp cập nhật tự tải và giải nén bộ cài. Mô hình đã tải đ
 
 ## Khi gặp lỗi
 
-- **Không tìm thấy tệp cập nhật:** nếu bạn đang dùng 0.1.1, hãy làm mục cập nhật từ 0.1.1 ở đầu trang trước.
+- **Không tìm thấy tệp cập nhật:** tải và giải nén gói Windows ở phần cài lần đầu, mở Setup.cmd và chọn đúng thư mục đã cài. Model ở thư mục đó được giữ lại.
 - **Không cài được hoặc mất mạng:** thử lại với cùng thư mục. Khi cần hỗ trợ, ghi lại thông báo lỗi và xem `logs\install.log` trong nơi cài.
 - **Có thể xóa thư mục cài cũ không?** Chỉ xóa sau khi đã sao lưu và xác nhận không còn cần dữ liệu: trong đó có thể có model, cấu hình, lịch sử, bản sửa và khóa riêng. Xóa model sẽ phải tải lại; không gửi khóa riêng cho người khác.
 

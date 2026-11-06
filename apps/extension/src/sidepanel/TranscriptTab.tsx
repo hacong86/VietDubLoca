@@ -6,7 +6,7 @@ import { T } from '../shared/strings';
 import { Card, Confirm, ErrorBox, downloadText, sendBg, useInterval } from './ui';
 
 const FLAG_VI: Record<string, string> = {
-  USER_OVERRIDE: 'Do bạn sửa', REPAIRED: 'Đã thử dịch lại', LANG_SUSPECT: 'Nghi sai ngôn ngữ', WRONG_TARGET_SCRIPT: 'Bản dịch chưa phải tiếng Việt — bấm Sửa rồi Dịch lại', EMPTY: 'Rỗng',
+  USER_OVERRIDE: 'Do bạn sửa', REPAIRED: 'Đã thử dịch lại', NON_SPEECH: 'Chú thích âm thanh — không đọc', LANG_SUSPECT: 'Nghi sai ngôn ngữ', WRONG_TARGET_SCRIPT: 'Bản dịch chưa phải tiếng Việt — bấm Sửa rồi Dịch lại', EMPTY: 'Rỗng',
   TRUNCATED: 'Bị cắt ngắn', MISSING_ID: 'Thiếu câu', JSON_INVALID: 'Sai định dạng',
 };
 const flagVi = (f: string) => FLAG_VI[f] ?? (f.startsWith('LENGTH_RATIO') ? 'Độ dài bất thường' : f.startsWith('PLACEHOLDER') ? 'Mất tên/mã được bảo vệ' : f);

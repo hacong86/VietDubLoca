@@ -72,12 +72,15 @@ class UnitState:
     from_cache: bool = False
     voice: str | None = None                   # giọng đã dùng cho audio hiện tại
 
+    def silent(self) -> bool:
+        return self.status == "ready" and not self.spoken.strip()
+
     def public(self) -> dict[str, Any]:
         u = self.unit
         return {"segment_id": u.unit_id, "revision": self.revision, "start_ms": u.start_ms, "end_ms": u.end_ms,
                 "source_text": u.source_text, "status": self.status, "target_display": self.display,
                 "target_spoken": self.spoken, "override": self.override, "flags": self.flags, "error": self.error,
-                "audio": self.tts_status, "audio_ms": self.audio_ms, "final": u.final, "speaker": u.speaker,
+                "audio": "silent" if self.silent() else self.tts_status, "audio_ms": self.audio_ms, "final": u.final, "speaker": u.speaker,
                 "voice": self.voice}
 
 
@@ -193,7 +196,7 @@ class Session:
             u = us.unit
             if u.end_ms <= now:
                 continue
-            if us.tts_status != "ready":
+            if us.tts_status != "ready" and not us.silent():
                 break
             covered = u.end_ms
         return max(0, covered - now)
@@ -309,7 +312,7 @@ class Session:
     def _apply_override(self, us: UnitState) -> None:
         ov = self.db.latest_override(us.unit.unit_id)
         if ov:
-            us.display, us.spoken = ov["target_display"], ov["target_spoken"]
+            us.display, us.spoken = ov["target_display"], to_spoken(ov["target_spoken"])
             us.revision = 1 + int(ov["revision"])
             us.override = True
             us.status = "ready"
@@ -342,14 +345,14 @@ class Session:
     def live_lag_ms(self) -> int | None:
         if self.mode != "live_delayed" or not self.units:
             return None
-        pending = [u for u in self.units if u.delivered is None]
+        pending = [u for u in self.units if u.delivered is None and not u.silent()]
         if not pending:
             return 0
         return max(0, self.clock.now_ms() - pending[0].unit.start_ms)
 
     def live_backlog_ms(self) -> int:
         return self.consumer_queue_ms + sum(u.unit.end_ms - u.unit.start_ms for u in self.units
-                                            if u.unit.final and u.delivered is None and u.status != "blocked")
+                                            if u.unit.final and u.delivered is None and u.status != "blocked" and not u.silent())
 
     async def check_live_overflow(self) -> None:
         if self.mode != "live_delayed" or self.live_overflow:
@@ -568,7 +571,7 @@ class Session:
             return False
         if self.mode == "live_delayed" and self.live_overflow:
             return False
-        cands = [u for u in self.ahead(self.settings.prefetch_target_ms) if u.status == "ready" and u.tts_status == "none"]
+        cands = [u for u in self.ahead(self.settings.prefetch_target_ms) if u.status == "ready" and u.tts_status == "none" and not u.silent()]
         if not cands:
             return False
         us = cands[0]
@@ -657,7 +660,7 @@ class Session:
                     await self.emit_state()
         elif st == S.PLAYING and self.mode != "live_delayed":
             ahead = [u for u in self.ahead(self.settings.low_water_ms) if u.unit.start_ms > self.clock.now_ms()]
-            if ahead and ahead[0].tts_status != "ready" and self.buffer_ahead_ms() < 500:
+            if ahead and ahead[0].tts_status != "ready" and not ahead[0].silent() and self.buffer_ahead_ms() < 500:
                 if self.set_state(S.BUFFERING, "low_water"):
                     await self.emit_state()
 
@@ -671,7 +674,7 @@ class Session:
         display = display.strip()
         if not display or len(display) > 8000:
             raise AppError("VALIDATION_FAILED", {"field": "target_display"})
-        spoken_final = (spoken or "").strip() or to_spoken(display)
+        spoken_final = to_spoken((spoken or "").strip() or display)
         _oid, orev = self.db.put_override(segment_id, display, spoken_final)
         us.display, us.spoken, us.override, us.status = display, spoken_final, True, "ready"
         us.revision = max(us.revision + 1, 1 + orev)          # revision trong phiên chỉ tăng
@@ -700,14 +703,14 @@ class Session:
         us.audio_key, us.audio_ms, us.tts_status, us.delivered, us.voice = None, None, "none", None, None
         if prev:                                           # về bản sửa trước đó (không ghi lại vào DB)
             us.override, us.status, us.flags, us.error = True, "ready", ["USER_OVERRIDE"], None
-            us.display, us.spoken = prev["target_display"], prev["target_spoken"]
+            us.display, us.spoken = prev["target_display"], to_spoken(prev["target_spoken"])
         else:
             us.override = False
             machine = self.db.get_translation_by_key(us.cache_key) if us.cache_key else None
             machine = machine or self.db.latest_machine_translation(segment_id, PROMPT_VERSION)  # tránh dùng bản dịch cũ sai ngôn ngữ
             if machine and machine["status"] == "READY":
                 us.status, us.display, us.spoken, us.flags, us.error = \
-                    "ready", machine["target_display"], machine["target_spoken"], list(machine["flags"]), None
+                    "ready", machine["target_display"], to_spoken(machine["target_spoken"]), list(machine["flags"]), None
             else:
                 us.status, us.display, us.spoken, us.flags = "pending", "", "", []     # chưa có bản máy → dịch lại khi tới
         await self.emit("audio.stop", {"reason": "revision_changed", "segment_id": segment_id,

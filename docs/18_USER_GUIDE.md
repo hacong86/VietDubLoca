@@ -1,4 +1,4 @@
-# Hướng dẫn sử dụng — VietDub Local 0.1.4 preview
+# Hướng dẫn sử dụng — VietDub Local 0.1.5 preview
 
 VietDub Local dịch phụ đề video YouTube sang tiếng Việt và đọc thuyết minh bằng giọng VieNeu. Mọi xử lý AI (dịch Qwen, giọng đọc, nhận dạng giọng nói) chạy **trên máy của bạn**, không gửi phụ đề hay âm thanh lên Internet. Nhận dạng âm thanh khi không có phụ đề hiện chỉ hỗ trợ tiếng Anh.
 
@@ -6,12 +6,12 @@ Yêu cầu: Windows 10/11 x64, NVIDIA và driver tương thích runtime đã ghi
 
 ## 1. Cài đặt
 
-1. Giải nén `VietDubLocal-0.1.4-win-x64.zip`, đối chiếu mã SHA256 với `SHA256SUMS.txt` từ nơi nhận gói.
+1. Giải nén `VietDubLocal-0.1.5-win-x64.zip`, đối chiếu mã SHA256 với `SHA256SUMS.txt` từ nơi nhận gói.
 2. Nhấp đúp **Setup.cmd**, chọn nơi lưu, xem thông tin tải và đánh dấu đồng ý. Bấm **Cài đặt**. Python, thư viện giọng và runtime được cài riêng; không cần quyền quản trị. ASR và tự chạy cùng Windows đều mặc định tắt. Có thể cài lại vào cùng nơi để thêm ASR.
 3. Mở hướng dẫn sau cài. Chrome → `chrome://extensions` → bật **Developer mode** → **Load unpacked** → chọn thư mục `extension` **tại nơi đã cài** ghi trong hướng dẫn. Không chọn thư mục trong ZIP tạm.
 4. Biểu tượng VietDub trên khay hệ thống là chương trình xử lý AI trên máy. Bản cài chưa ký số; Chrome yêu cầu người dùng tự nạp tiện ích.
 
-**Cập nhật:** mở `Cap-nhat-VietDub.cmd` trong nơi lưu, đồng ý tải và bấm Cài đặt; xong bấm Reload tiện ích Chrome. Từ bản 0.1.1, tải `Cap-nhat-tu-0.1.1.cmd` trong trang phát hành và chọn nơi cài cũ. Nếu bộ xử lý mới không khởi động được trong lúc cài, bộ cài thử trả con trỏ về bản trước. Xem nhật ký nếu báo không khôi phục được hoàn toàn.
+**Cập nhật:** mở `Cap-nhat-VietDub.cmd` trong nơi lưu, đồng ý tải và bấm Cài đặt; xong bấm Reload tiện ích Chrome. Nếu bộ xử lý mới không khởi động được trong lúc cài, bộ cài thử trả con trỏ về bản trước. Xem nhật ký nếu báo không khôi phục được hoàn toàn.
 **Gỡ cài:** `powershell -ExecutionPolicy Bypass -File D:\VietDubLocal\app\uninstall.ps1` (thêm `-KeepModels` để giữ mô hình, `-KeepData` để giữ bản sửa/bộ nhớ đệm), rồi gỡ tiện ích trong `chrome://extensions`.
 
 ## 2. Lần đầu sử dụng
@@ -21,6 +21,8 @@ Yêu cầu: Windows 10/11 x64, NVIDIA và driver tương thích runtime đã ghi
 3. Tab **Cài đặt** → **Giọng đọc**: bấm **Nghe thử** rồi chọn giọng dễ nghe. Không giọng nào là giọng thật của người trong video, và app không nhân bản giọng.
 
 ## 3. Xem video có phụ đề
+
+Các chú thích âm thanh thông dụng như [nhạc], [vỗ tay] không được đọc thành tiếng. Nếu một câu vừa có chú thích vừa có lời thoại, ứng dụng vẫn đọc phần lời; chú thích có thể xem trong phụ đề gốc.
 
 1. Mở video YouTube. Trên thanh điều khiển của video có nút **VI**. Bấm nút này hoặc bấm **Bật tiếng Việt** trong bảng bên (phím tắt `Alt+Shift+V`).
 2. App thử lấy phụ đề theo thông tin ngôn ngữ từ YouTube, không cần bạn bật CC; kiểm nhãn nguồn để biết phụ đề được chọn.

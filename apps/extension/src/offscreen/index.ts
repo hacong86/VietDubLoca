@@ -235,7 +235,7 @@ function onEvent(e: EventEnvelope): void {
       if (t.success && t.data.segment_id) {
         const seg = { segment_id: t.data.segment_id, revision: t.data.revision ?? 1, start_ms: t.data.start_ms ?? 0, end_ms: t.data.end_ms ?? 0,
           status: e.event === 'translation.ready' ? 'ready' : 'blocked' };
-        engine.segments.set(seg.segment_id, seg);
+        engine.segments.set(seg.segment_id, { ...seg, status: e.event === 'translation.ready' && t.data.target_spoken === '' ? 'silent' : seg.status });
         toTab({ ns: NS, type: 'overlay.segments', segments: [{ ...seg, source_text: t.data.source_text ?? '', target_display: t.data.target_display ?? '' }] });
       }
       break;
@@ -281,8 +281,8 @@ function scheduleSegRefresh(delay = 1500): void {
     segRefreshTimer = undefined;
     if (!cfg) return;
     try {
-      const r = await rest<{ segments: (OverlaySeg & { final: boolean })[] }>('GET', `/v1/sessions/${cfg.session_id}/segments`);
-      for (const s of r.segments) engine.segments.set(s.segment_id, { segment_id: s.segment_id, revision: s.revision, start_ms: s.start_ms, end_ms: s.end_ms, status: s.status });
+      const r = await rest<{ segments: (OverlaySeg & { final: boolean; audio: string })[] }>('GET', `/v1/sessions/${cfg.session_id}/segments`);
+      for (const s of r.segments) engine.segments.set(s.segment_id, { segment_id: s.segment_id, revision: s.revision, start_ms: s.start_ms, end_ms: s.end_ms, status: s.audio === 'silent' ? 'silent' : s.status });
       toTab({ ns: NS, type: 'overlay.segments', segments: r.segments.filter((s) => s.status === 'ready' || s.status === 'blocked').map((s) => ({
         segment_id: s.segment_id, revision: s.revision, start_ms: s.start_ms, end_ms: s.end_ms, source_text: s.source_text, target_display: s.target_display, status: s.status })) });
     } catch {

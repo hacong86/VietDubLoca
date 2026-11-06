@@ -1,7 +1,7 @@
-VietDub Local 0.1.4 preview — Cài trên Windows 10/11 x64
+VietDub Local 0.1.5 preview — Cài trên Windows 10/11 x64
 ======================================================
 
-Nguồn tải: https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.4-preview
+Nguồn tải: https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.5-preview
 Hướng dẫn thử cài từ đầu: CAI-MOI-TU-GITHUB.md trong gói hoặc docs/CAI_MOI_TU_GITHUB.md trên GitHub.
 Đã dùng bản 0.1.1? Chọn đúng thư mục đã cài để giữ model. Giữ backup dữ liệu quan trọng.
 

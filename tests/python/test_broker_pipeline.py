@@ -81,6 +81,30 @@ def test_thai_caption_reaches_translation_and_audio(client, token, ctx):
         ws.__exit__(None, None, None)
 
 
+def test_sound_only_captions_do_not_synthesize_or_block_speech(client, token, ctx):
+    sid = start(client, token)
+    ws, w = ws_auth(client, token)
+    try:
+        w.send_json({"type": "subscribe", "session_id": sid})
+        cues = [
+            {"cue_id": "c1", "start_ms": 0, "end_ms": 2000, "text": "[Music].", "committed": True},
+            {"cue_id": "c2", "start_ms": 2100, "end_ms": 4000, "text": "[Applause].", "committed": True},
+            {"cue_id": "c3", "start_ms": 4100, "end_ms": 7000, "text": "Hello there.", "committed": True},
+        ]
+        assert client.post(f"/v1/sessions/{sid}/captions", headers=H(token), json=batch(sid, 0, cues)).status_code == 202
+        assert client.post(f"/v1/sessions/{sid}/clock", headers=H(token), json=clock(sid, 0, 0)).status_code == 204
+        events, frames = collect(w, lambda e, f: any(x["event"] == "audio.end" for x in e))
+        silent = [e["payload"] for e in events if e["event"] == "translation.ready" and "NON_SPEECH" in e["payload"]["flags"]]
+        assert len(silent) == 2 and all(x["target_spoken"] == "" for x in silent)
+        assert not any(e["event"] == "audio.begin" and e["payload"]["segment_id"] in {x["segment_id"] for x in silent} for e in events)
+        assert frames and ctx.rt.synth_calls and all("nhạc" not in t.lower() and "vỗ tay" not in t.lower() for t, _ in ctx.rt.synth_calls)
+        segments = client.get(f"/v1/sessions/{sid}/segments", headers=H(token)).json()["segments"]
+        assert sum(s["audio"] == "silent" for s in segments) == 2
+        assert ctx.session.buffer_ahead_ms() > 0
+    finally:
+        ws.__exit__(None, None, None)
+
+
 def test_full_pipeline_epoch_and_revision(client, token, ctx):
     sid = start(client, token)
     ws, w = ws_auth(client, token)
