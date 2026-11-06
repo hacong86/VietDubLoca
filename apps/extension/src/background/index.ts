@@ -239,47 +239,76 @@ async function toggle(tabId: number): Promise<{ ok: boolean; code?: string; mess
   return startSession(tabId);
 }
 
-async function startCapture(tabId: number): Promise<{ ok: boolean; code?: string }> {
+let captureStarting = false;
+async function startCapture(tabId: number): Promise<{ ok: boolean; code?: string; message?: string }> {
+  if (captureStarting) return { ok: false, code: 'CAPTURE_IN_PROGRESS' };
+  captureStarting = true;
+  try { return await startCaptureOnce(tabId); }
+  finally { captureStarting = false; }
+}
+
+async function startCaptureOnce(tabId: number): Promise<{ ok: boolean; code?: string; message?: string }> {
+  const granted = await chrome.permissions.contains({ permissions: ['tabCapture'] });
+  if (!granted) return { ok: false, code: 'PERMISSION_DENIED' };
   let a = await getActive();
+  if (a?.tab_id === tabId && a.capture) return { ok: true };
   if (!a || a.tab_id !== tabId) {
     const r = await startSession(tabId, 'live_delayed');
     if (!r.ok) return r;
     a = await getActive();
   }
   if (!a) return { ok: false, code: 'CONNECT_FAILED' };
-  const granted = await chrome.permissions.contains({ permissions: ['tabCapture'] });
-  if (!granted) return { ok: false, code: 'PERMISSION_DENIED' };
-  let streamId: string;
-  try {
-    streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabId });
-  } catch {
-    return { ok: false, code: 'PERMISSION_DENIED' };
-  }
   const sid = a.session_id;
+  let asrStarted = false;
   try {
     await ensureOffscreen(true);                                   // cần USER_MEDIA
     const snap = await api<{ timeline_epoch: number }>('GET', `/v1/sessions/${sid}`);
     const { cfg, es } = await offscreenCfg(a, snap.timeline_epoch, 'live_delayed');
     if (!(await startOffscreen(cfg))) throw new ApiError('WORKER_CRASHED', '', 0);
     await api('POST', `/v1/sessions/${sid}/control`, { op: 'asr_start' });
+    asrStarted = true;
     await sendOffscreen({ type: 'offscreen.mode', mode: 'live_delayed' });
+    if ((await getActive())?.session_id !== sid) throw new ApiError('SESSION_CONFLICT', '', 0);
+    const tab = await chrome.tabs.get(tabId).catch(() => undefined);
+    if (!tab?.active) throw new ApiError('CAPTURE_TAB_NOT_ACTIVE', '', 0);
+    // Stream IDs expire after seconds: obtain one only after all slow setup and consume immediately.
+    let streamId: string;
+    try {
+      streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabId });
+    } catch (e) {
+      const m = String((e as Error)?.message ?? e);
+      const code = /not been invoked|activeTab|not active/i.test(m) ? 'CAPTURE_TAB_NOT_ACTIVE'
+        : /already|active stream/i.test(m) ? 'CAPTURE_ALREADY_ACTIVE' : 'CAPTURE_START_FAILED';
+      dlog('tabCapture.getMediaStreamId failed', code);
+      throw new ApiError(code, '', 0);
+    }
     const r = await sendOffscreen<{ ok: boolean; code?: string }>({ type: 'offscreen.capture_start', stream_id: streamId });
-    if (!r?.ok) throw new ApiError(r?.code ?? 'PERMISSION_DENIED', '', 0);
-    if ((await getActive())?.session_id !== sid) return { ok: false, code: 'SESSION_CONFLICT' };
+    if (!r?.ok) throw new ApiError(r?.code ?? 'CAPTURE_START_FAILED', '', 0);
+    if ((await getActive())?.session_id !== sid) throw new ApiError('SESSION_CONFLICT', '', 0);
     // chỉ commit trạng thái khi MỌI bước thành công (Codex #6)
     await setActive({ ...a, mode: 'live_delayed', capture: true });
     await toTab(tabId, { ns: NS, type: 'session.started', mode: 'live_delayed', prefs: es.prefs, capture: true, original_gain: es.settings.original_gain });
     return { ok: true };
   } catch (e) {
-    const code = e instanceof ApiError ? e.code : 'CONNECT_FAILED';
+    const code = e instanceof ApiError && e.code === 'MODEL_NOT_READY' && e.details.reason === 'asr_runtime_missing'
+      ? 'ASR_NOT_INSTALLED'
+      : e instanceof ApiError && e.code === 'MODEL_NOT_READY' && e.details.model_id === 'whisper_small_en'
+        ? 'ASR_MODEL_MISSING' : e instanceof ApiError ? e.code : 'CONNECT_FAILED';
     dlog('startCapture failed', code);
-    await sendOffscreen({ type: 'offscreen.capture_stop' });
-    try {
-      await api('POST', `/v1/sessions/${sid}/control`, { op: 'asr_stop' });
-    } catch {
-      /* bỏ qua */
+    if ((await getActive())?.session_id === sid) {
+      await sendOffscreen({ type: 'offscreen.capture_stop' });
+      if (asrStarted) {
+        try {
+          await api('POST', `/v1/sessions/${sid}/control`, { op: 'asr_stop' });
+          if (a.mode !== 'live_delayed') await api('POST', `/v1/sessions/${sid}/control`, { op: 'mode', mode: a.mode });
+        } catch { /* phiên có thể đã dừng */ }
+      }
+      await sendOffscreen({ type: 'offscreen.mode', mode: a.mode });
     }
-    return { ok: false, code };
+    const message = code === 'ASR_NOT_INSTALLED' ? 'Chưa cài thành phần nhận dạng âm thanh.'
+      : code === 'ASR_MODEL_MISSING' ? 'Chưa tải mô hình nhận dạng âm thanh.'
+        : e instanceof ApiError ? e.messageVi : '';
+    return { ok: false, code, ...(message ? { message } : {}) };
   }
 }
 

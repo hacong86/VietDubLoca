@@ -6,8 +6,8 @@ VietDub dịch phụ đề YouTube sang tiếng Việt và đọc bằng giọng
 
 ### 1. Tải bộ cài
 
-1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.5-preview).
-2. Cuộn xuống mục **Assets**. Bấm **VietDubLocal-0.1.5-win-x64.zip** để tải. Không chọn mục **Source code**.
+1. Mở [trang tải VietDub Local](https://github.com/hacong86/VietDubLoca/releases/tag/v0.1.6-preview).
+2. Cuộn xuống mục **Assets**. Bấm **VietDubLocal-0.1.6-win-x64.zip** để tải. Không chọn mục **Source code**.
 
 ### 2. Giải nén và cài
 
@@ -43,6 +43,14 @@ Nếu đang dùng 0.1.3 và gặp bản dịch vẫn là tiếng Thái, hãy c�
 3. Trên Chrome mở `chrome://extensions`, tìm VietDub Local và bấm **Tải lại**.
 
 Tệp cập nhật tự tải và giải nén bộ cài. Mô hình đã tải được giữ lại; nếu bản mới cần thành phần khác, chương trình có thể tải thêm. Khi đang xem video, hãy dừng thuyết minh trước khi cập nhật.
+
+## Video tiếng Anh không có phụ đề
+
+1. Nếu chưa cài nhận dạng âm thanh, chạy **Cap-nhat-VietDub.cmd** trong nơi đã cài; khi cửa sổ cài đặt mở ra, giữ nguyên thư mục cũ, tích **Thêm nhận dạng âm thanh tiếng Anh khi không có phụ đề**, rồi bấm **Cài đặt**. Nếu đã cập nhật trước đó, chạy **Setup.cmd** từ gói cài mới, chọn cùng thư mục và tích ô này. Thành phần nhận dạng cần tải thêm.
+2. Mở Chrome, vào `chrome://extensions`, bấm **Tải lại** VietDub. Kết nối lại VietDub, vào **Mô hình**, tích **Thêm nhận dạng âm thanh khi video không có phụ đề**, đồng ý tải và bấm chuẩn bị.
+3. Mở video tiếng Anh, bấm biểu tượng VietDub trên thanh công cụ Chrome, rồi trong tab **Xem** bấm **Dịch âm thanh tab**. Cho phép khi Chrome hỏi. Âm thanh nhận dạng có độ trễ.
+
+Chức năng nghe video không có phụ đề hiện chỉ nhận dạng tiếng Anh; video tiếng Thái và các ngôn ngữ khác vẫn cần phụ đề phù hợp.
 
 ## Khi gặp lỗi
 

@@ -20,7 +20,7 @@ export function ErrorBox({ error }: { error: unknown }) {
   if (!error) return null;
   const e = error instanceof ApiError ? error : null;
   const code = e?.code ?? (error as { code?: string })?.code ?? 'INTERNAL';
-  const msg = e?.messageVi ?? (typeof error === 'string' ? error : 'Có lỗi xảy ra.');
+  const msg = e?.messageVi || (typeof error === 'string' ? error : (error as { message?: string })?.message || 'Có lỗi xảy ra.');
   const action = (e?.details?.action_vi as string | undefined) ?? ERROR_ACTION_VI[code];
   return (
     <div className="status err" role="alert">

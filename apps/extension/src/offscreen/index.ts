@@ -346,16 +346,27 @@ function onClock(c: ClockSnap): void {
 
 // ------------------------------------------------------------------ capture (ASR)
 async function startCapture(streamId: string): Promise<void> {
-  if (!cfg || capture) return;
+  if (!cfg) throw new Error('capture session missing');
+  if (capture) return;
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: { mandatory: { chromeMediaSource: 'tab', chromeMediaSourceId: streamId } } as unknown as MediaTrackConstraints,
     video: false,
   });
-  await engine.ctx.audioWorklet.addModule(chrome.runtime.getURL('capture-worklet.js'));
-  const src = engine.ctx.createMediaStreamSource(stream);
-  const node = new AudioWorkletNode(engine.ctx, 'vietdub-capture');
-  src.connect(node);                   // nhánh ASR: TRƯỚC gain nghe
-  src.connect(engine.srcGain);         // nhánh nghe: tiếng gốc qua gain (tab bị capture sẽ im nếu không nối lại)
+  let src: MediaStreamAudioSourceNode | undefined;
+  let node: AudioWorkletNode | undefined;
+  try {
+    if (!stream.getAudioTracks().length) throw new Error('capture stream has no audio');
+    await engine.ctx.audioWorklet.addModule(chrome.runtime.getURL('capture-worklet.js'));
+    src = engine.ctx.createMediaStreamSource(stream);
+    node = new AudioWorkletNode(engine.ctx, 'vietdub-capture');
+    src.connect(node);                   // nhánh ASR: TRƯỚC gain nghe
+    node.connect(engine.ctx.destination); // worklet outputs silence; connection keeps it processing
+    src.connect(engine.srcGain);         // nhánh nghe: tiếng gốc qua gain (tab bị capture sẽ im nếu không nối lại)
+  } catch (e) {
+    try { src?.disconnect(); node?.disconnect(); } catch { /* best-effort cleanup */ }
+    stream.getTracks().forEach((t) => t.stop());
+    throw e;
+  }
   capture = { stream, node, src, seq: 0, rs: null, pending: [] };
   const captureEpoch = engine.epoch;
   node.port.onmessage = (ev: MessageEvent<{ samples: Float32Array; rate: number }>) => {
@@ -509,9 +520,9 @@ chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
           toTab({ ns: NS, type: 'volume.restore' });
           sendResponse({ ok: true });
         }).catch((e: Error) => {
-          lastError = 'PERMISSION_DENIED';
+          lastError = 'CAPTURE_START_FAILED';
           broadcast();
-          sendResponse({ ok: false, code: 'PERMISSION_DENIED', detail: e.name });
+          sendResponse({ ok: false, code: 'CAPTURE_START_FAILED', detail: e.name });
         });
         return true;
       case 'offscreen.capture_stop':

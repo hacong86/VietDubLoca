@@ -57,7 +57,9 @@ export function WatchTab({ status, info, refreshInfo, settings, saveSettings }: 
   };
   const capture = () => run(async () => {
     // quyền tabCapture chỉ xin khi người dùng bấm (FR-008); không micro
-    const ok = await chrome.permissions.request({ permissions: ['tabCapture'] });
+    let ok = false;
+    try { ok = await chrome.permissions.request({ permissions: ['tabCapture'] }); }
+    catch { return { ok: false, code: 'PERMISSION_DENIED' }; }
     if (!ok) return { ok: false, code: 'PERMISSION_DENIED' };
     return sendBg({ type: 'panel.capture_start', tab_id: info?.tab_id });
   });
@@ -211,9 +213,9 @@ export function WatchTab({ status, info, refreshInfo, settings, saveSettings }: 
             <label className="btn" style={{ display: 'inline-flex', alignItems: 'center' }}>
               {T.import_subtitle}<input type="file" accept=".srt,.vtt,text/vtt" className="sr-only" onChange={(e) => void onFile(e.target.files?.[0])} />
             </label>
-            <button className="btn" onClick={capture} disabled={busy}>{T.capture_tab}</button>
+            <button className="btn" onClick={capture} disabled={busy}>{busy ? 'Đang chuẩn bị…' : T.capture_tab}</button>
           </div>
-          <p className="small muted">{T.tab_audio_delay}. Chrome sẽ hỏi quyền thu âm thanh của tab này (không dùng micro).</p>
+          <p className="small muted">{T.tab_audio_delay}. Chỉ thu âm thanh tab khi bạn yêu cầu, không dùng micro. Nhận dạng giọng nói hiện chỉ hỗ trợ tiếng Anh.</p>
         </Card>
       )}
 
