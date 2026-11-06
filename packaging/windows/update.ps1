@@ -35,7 +35,13 @@ try {
  if ($url -ne "https://github.com/hacong86/VietDubLoca/releases/download/$($candidate.release.tag_name)/$name") { throw 'Địa chỉ tệp cập nhật không hợp lệ.' }
  $answer=[Windows.Forms.MessageBox]::Show("Có bản $version. Tải và mở trình cập nhật?`nModel đã tải được giữ lại.", 'Cập nhật VietDub', 'YesNo', 'Question')
  if ($answer -ne 'Yes') { exit 0 }
- $temp=Join-Path ([IO.Path]::GetTempPath()) ('VietDub-update-'+[Guid]::NewGuid().ToString('N'))
+ # Keep the temporary package inside this installation, on the user's chosen drive.
+ # Reparse points could redirect cleanup elsewhere, so refuse them.
+ $base=Join-Path $HomeDir 'tmp'
+ if (Test-Path -LiteralPath $base) {
+  if ((Get-Item -LiteralPath $base -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Thư mục tạm không được là liên kết hoặc junction.' }
+ } else { New-Item -ItemType Directory -Path $base | Out-Null }
+ $temp=Join-Path $base ('VietDub-update-'+[Guid]::NewGuid().ToString('N'))
  New-Item -ItemType Directory -Path $temp | Out-Null
  $zip=Join-Path $temp $name
  Write-Host "Đang tải bản $version. Xin chờ..."

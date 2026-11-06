@@ -2,7 +2,7 @@
   "name": "vietdub-local",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "scripts": {
     "build": "node apps/extension/build.mjs",

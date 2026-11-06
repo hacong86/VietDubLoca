@@ -48,7 +48,7 @@ def run_update(tmp_path, *, bad_hash=False, traversal=False, cancelled=False):
             skipping = False
             continue
         elif '$proc=Start-Process ' in line:
-            line = " Write-Output ('OPENED_SETUP_HOME=' + $HomeDir); $proc=[pscustomobject]@{ ExitCode=0 }"
+            line = " if (-not $setup.StartsWith((Join-Path $HomeDir 'tmp') + '\\', [StringComparison]::OrdinalIgnoreCase)) { throw 'temporary directory outside home' }; Write-Output ('OPENED_SETUP_HOME=' + $HomeDir); $proc=[pscustomobject]@{ ExitCode=0 }"
         elif '[Windows.Forms.MessageBox]::Show($_.Exception.Message' in line:
             line = " Write-Output ('UPDATE_ERROR=' + $_.Exception.Message)"
         out.append(line)
@@ -57,6 +57,8 @@ def run_update(tmp_path, *, bad_hash=False, traversal=False, cancelled=False):
     env = {**os.environ, 'VD_TEST_RELEASE': str(release_file), 'VD_TEST_ZIP': str(archive), 'VD_TEST_HOME': str(home)}
     result = subprocess.run(['powershell', '-NoProfile', '-STA', '-EncodedCommand', encoded], env=env, capture_output=True, timeout=30)
     assert model.read_bytes() == b'model stays'
+    temp_root = home / 'tmp'
+    assert not temp_root.exists() or list(temp_root.iterdir()) == []
     assert not (tmp_path / 'escape.txt').exists()
     return result
 

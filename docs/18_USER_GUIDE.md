@@ -1,4 +1,4 @@
-# Hướng dẫn sử dụng — VietDub Local 0.1.2 preview
+# Hướng dẫn sử dụng — VietDub Local 0.1.3 preview
 
 VietDub Local dịch phụ đề video YouTube sang tiếng Việt và đọc thuyết minh bằng giọng VieNeu. Mọi xử lý AI (dịch Qwen, giọng đọc, nhận dạng giọng nói) chạy **trên máy của bạn**, không gửi phụ đề hay âm thanh lên Internet. Nhận dạng âm thanh khi không có phụ đề hiện chỉ hỗ trợ tiếng Anh.
 
@@ -6,7 +6,7 @@ Yêu cầu: Windows 10/11 x64, NVIDIA và driver tương thích runtime đã ghi
 
 ## 1. Cài đặt
 
-1. Giải nén `VietDubLocal-0.1.2-win-x64.zip`, đối chiếu mã SHA256 với `SHA256SUMS.txt` từ nơi nhận gói.
+1. Giải nén `VietDubLocal-0.1.3-win-x64.zip`, đối chiếu mã SHA256 với `SHA256SUMS.txt` từ nơi nhận gói.
 2. Nhấp đúp **Setup.cmd**, chọn nơi lưu, xem thông tin tải và đánh dấu đồng ý. Bấm **Cài đặt**. Python, thư viện giọng và runtime được cài riêng; không cần quyền quản trị. ASR và tự chạy cùng Windows đều mặc định tắt. Có thể cài lại vào cùng nơi để thêm ASR.
 3. Mở hướng dẫn sau cài. Chrome → `chrome://extensions` → bật **Developer mode** → **Load unpacked** → chọn thư mục `extension` **tại nơi đã cài** ghi trong hướng dẫn. Không chọn thư mục trong ZIP tạm.
 4. Biểu tượng VietDub trên khay hệ thống là chương trình xử lý AI trên máy. Bản cài chưa ký số; Chrome yêu cầu người dùng tự nạp tiện ích.
